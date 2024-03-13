@@ -91,6 +91,27 @@ head(sorted_obs_per_common_name$common_name, 3)
 carrion_crow_data <- norfolk_ebird[norfolk_ebird$common_name == "Carrion Crow", ]
 total_obs_carrion_crow <- sum(carrion_crow_data$obs, na.rm = TRUE)
 
+# What is the average number of bird species observed per survey at Stiffkey Fen?
+stiffkey_fen_data <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
+unique_species_per_survey <- aggregate(common_name ~ survey, data = stiffkey_fen_data, FUN = function(x) length(unique(x)))
+mean(unique_species_per_survey$common_name)
+
+# Provide the total count of Manx Shearwaters observed at Sidestrand.
+manx_shearwater_blakeney_data <- norfolk_ebird[norfolk_ebird$common_name == "Manx Shearwater" & grepl("Sidestrand", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
+total_obs_manx_shearwater_blakeney <- sum(manx_shearwater_blakeney_data$obs, na.rm = TRUE)
+
+# How many surveys were conducted on 5th May?
+names(norfolk_ebird)[names(norfolk_ebird) == "OBSERVATION DATE"] <- "date"
+norfolk_ebird$date <- as.Date(norfolk_ebird$date, format = "%d/%m/%Y")
+may_5_data <- norfolk_ebird[format(norfolk_ebird$date, "%m-%d") == "05-05", ]
+length(unique(may_5_data$survey))
+
+# How many observations were conducted on 5th May?
+sum(may_5_data$obs, na.rm = TRUE)
+
+# How many unique species were conducted on 5th May?
+length(unique(may_5_data$common_name))
+
 
 # 4. Easy inference questions -----
 
