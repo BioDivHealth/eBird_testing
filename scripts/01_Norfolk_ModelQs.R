@@ -70,6 +70,28 @@ obs_per_common_name <- aggregate(obs ~ common_name, data = norfolk_ebird, FUN = 
 highest_obs_common_name <- obs_per_common_name[which.max(obs_per_common_name$obs), "common_name"]
 highest_obs_common_name_df <- data.frame(common_name = highest_obs_common_name)
 
+# What are the 3 most common birds at Hardwick Flood Lagoon??
+hardwick_data <- norfolk_ebird[grepl("Hardwick Flood Lagoon", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
+obs_per_common_name <- aggregate(obs ~ common_name, data = hardwick_data, FUN = sum)
+sorted_obs_per_common_name <- obs_per_common_name[order(-obs_per_common_name$obs), ]
+head(sorted_obs_per_common_name$common_name, 3)
+
+# What are the 3 most common birds in Norfolk?
+obs_per_common_name <- aggregate(obs ~ common_name, data = norfolk_ebird, FUN = sum)
+sorted_obs_per_common_name <- obs_per_common_name[order(-obs_per_common_name$obs), ]
+head(sorted_obs_per_common_name$common_name, 3)
+
+# Rank the top 10 most common bird species observed at Cromer Golf Course.
+golf_data <- norfolk_ebird[grepl("Cromer Golf Course", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
+obs_per_common_name <- aggregate(obs ~ common_name, data = golf_data, FUN = sum)
+sorted_obs_per_common_name <- obs_per_common_name[order(-obs_per_common_name$obs), ]
+head(sorted_obs_per_common_name$common_name, 3)
+
+# What is the total count of Carrion Crows observed in Norfolk?
+carrion_crow_data <- norfolk_ebird[norfolk_ebird$common_name == "Carrion Crow", ]
+total_obs_carrion_crow <- sum(carrion_crow_data$obs, na.rm = TRUE)
+
+
 # 4. Easy inference questions -----
 
 
