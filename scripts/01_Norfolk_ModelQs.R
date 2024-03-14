@@ -108,9 +108,43 @@ length(unique(may_5_data$survey))
 
 # How many observations were conducted on 5th May?
 sum(may_5_data$obs, na.rm = TRUE)
-
-# How many unique species were conducted on 5th May?
 length(unique(may_5_data$common_name))
+
+# How many exotic species were there at Stiffkey Fen
+stiffkey_fen_data <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
+exotic_data <- stiffkey_fen_data[!is.na(stiffkey_fen_data$exotic), ]
+nrow(exotic_data)
+
+# What is the total count of birds observed at Stiffkey Fen in the first week of May 2023?
+norfolk_ebird$date <- as.Date(norfolk_ebird$date, format = "%d/%m/%Y")
+stif_may_2023_data <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
+                                        norfolk_ebird$date >= as.Date("2022-05-01") & 
+                                        norfolk_ebird$date <= as.Date("2022-05-07"), ]
+sum(stif_may_2023_data$obs, na.rm = TRUE)
+
+# Provide the average duration of observer effort per survey at Cringleford Marsh.
+cring_data <- norfolk_ebird[grepl("Cringleford Marsh", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
+observer_effort_per_survey <- aggregate(duration ~ survey, data = cring_data, FUN = sum)
+mean(observer_effort_per_survey$duration)
+
+# How many surveys conducted at Cringleford Marsh included Coal tit?
+cring_data <- norfolk_ebird[grepl("Cringleford Marsh", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
+fieldfare_surveys_cringleford_marsh <- unique(cring_data$survey[cring_data$common_name == "Coal Tit"])
+length(fieldfare_surveys_cringleford_marsh)
+
+# List all the bird species observed at Cromer Golf Course before 5pm on May 5th 2022.
+# Convert the date column to Date format
+norfolk_ebird$date <- as.Date(norfolk_ebird$date, format = "%d/%m/%Y")
+v
+names(norfolk_ebird)[names(norfolk_ebird) == "TIME OBSERVATIONS STARTED"] <- "time"
+norfolk_ebird$time <- as.POSIXct(norfolk_ebird$time, format = "%H:%M:%S")
+cromer_golf_course_data <- norfolk_ebird[grepl("Cromer Golf Course", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
+                                           norfolk_ebird$date == as.Date("2022-05-05") & 
+                                           format(norfolk_ebird$time, "%H:%M") < "17:00", ]
+
+# What is the least common bird species observed?
+
+
 
 
 # 4. Easy inference questions -----
