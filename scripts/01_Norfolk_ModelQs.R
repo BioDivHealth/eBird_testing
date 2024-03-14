@@ -177,20 +177,53 @@ most_stationary_bird <- names(stationary_counts)[which.max(stationary_counts)]
 
 # 4. Easy inference questions -----
 
-# Where are Little Grebes more abundant, at Stiffkey Fen or at Titchwell Marsh?
-stiffkey_fen_little_grebes <- norfolk_ebird[norfolk_ebird$LOCALITY == "Stiffkey Fen",]
-stiffkey_fen_little_grebes <- stiffkey_fen_data[common_name == "Common Buzzard", ]
-total_obs_stiffkey_fen <- sum(stiffkey_fen_little_grebes$obs, na.rm = TRUE)
-titchwell_marsh_little_grebes <- norfolk_ebird[norfolk_ebird$LOCALITY == "Titchwell Marsh" & norfolk_ebird$common_name == "Common Buzzard", ]
-total_obs_titchwell_marsh <- sum(titchwell_marsh_little_grebes$obs, na.rm = TRUE)
+# Where are Common Buzzards more abundant, at Stiffkey Fen or at Titchwell Marsh?
+stiffkey_fen_common_buzzard <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
+                                               grepl("Common Buzzard", norfolk_ebird$common_name, ignore.case = TRUE), ]
+
+total_obs_stiffkey_fen <- sum(stiffkey_fen_common_buzzard$obs, na.rm = TRUE)
+
+titchwell_marsh_common_buzzard <- norfolk_ebird[grepl("Titchwell Marsh", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
+                                               grepl("Common Buzzard", norfolk_ebird$common_name, ignore.case = TRUE), ]
+total_obs_titchwell_marsh <- sum(titchwell_marsh_common_buzzard$obs, na.rm = TRUE)
 
 # Compare the observation counts
 if (total_obs_stiffkey_fen > total_obs_titchwell_marsh) {
-  print("Little Grebes are more abundant at Stiffkey Fen.")
+  print("Buzzards are more abundant at Stiffkey Fen.")
 } else if (total_obs_stiffkey_fen < total_obs_titchwell_marsh) {
-  print("Little Grebes are more abundant at Titchwell Marsh.")
+  print("Buzzards are more abundant at Titchwell Marsh.")
 } else {
-  print("Little Grebes are equally abundant at Stiffkey Fen and Titchwell Marsh.")
+  print("Buzzardsare equally abundant at Stiffkey Fen and Titchwell Marsh.")
 }
 
+# Which species are never spotted at Cromer Golf Course?
+all_species <- unique(norfolk_ebird$common_name)
+cromer_golf_course_data <- norfolk_ebird[norfolk_ebird$LOCALITY == "Cromer Golf Course", ]
+species_at_cromer <- unique(cromer_golf_course_data$common_name)
+species_never_spotted <- setdiff(all_species, species_at_cromer)
+print(species_never_spotted)
+
+# Which two species are always observed together at Stiffkey fen?
+# Group data by survey
+
+
+
+
+
 # 5. Hard inference questions -----
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
