@@ -143,11 +143,54 @@ cromer_golf_course_data <- norfolk_ebird[grepl("Cromer Golf Course", norfolk_ebi
                                            format(norfolk_ebird$time, "%H:%M") < "17:00", ]
 
 # What is the least common bird species observed?
+# Aggregate data by common_name and calculate the total number of observations for each species
+obs_per_species <- aggregate(obs ~ common_name, data = stiffkey_fen_data, FUN = sum)
+least_common_species <- obs_per_species[which.min(obs_per_species$obs), "common_name"]
+least_common_species
 
+# Where was the most northerly sighting of the Smew?
+smew_data <- norfolk_ebird[norfolk_ebird$common_name == "Smew", ]
+most_northerly_smew <- smew_data[which.max(smew_data$LATITUDE), ]
+print(most_northerly_smew)
 
+# What is the average number of bird species observed per survey at Stiffkey Fen during May 2022?
+stiffkey_fen_may_2022_data <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
+                                              format(norfolk_ebird$date, "%Y-%m") == "2022-05", ]
+unique_species_per_survey <- aggregate(common_name ~ survey, data = stiffkey_fen_may_2022_data, FUN = function(x) length(unique(x)))
+mean(unique_species_per_survey$common_name)
+
+# What was the median duration effort?
+median(norfolk_ebird$duration, na.rm = TRUE)
+
+# Which location has the highest number of individual observers?
+# Aggregate data by location and count the number of unique observers
+names(norfolk_ebird)[names(norfolk_ebird) == "OBSERVER ID"] <- "observer"
+observers_per_location <- aggregate(observer ~ LOCALITY, data = norfolk_ebird, FUN = function(x) length(unique(x)))
+location_max_observers <- observers_per_location[which.max(observers_per_location$observer), "locality"]
+
+# Which bird is most often seen stationary?
+names(norfolk_ebird)[names(norfolk_ebird) == "PROTOCOL TYPE"] <- "protocol"
+stationary_data <- norfolk_ebird[norfolk_ebird$protocol == "stationary", ]
+stationary_counts <- table(stationary_data$common_name)
+most_stationary_bird <- names(stationary_counts)[which.max(stationary_counts)]
 
 
 # 4. Easy inference questions -----
 
+# Where are Little Grebes more abundant, at Stiffkey Fen or at Titchwell Marsh?
+stiffkey_fen_little_grebes <- norfolk_ebird[norfolk_ebird$LOCALITY == "Stiffkey Fen",]
+stiffkey_fen_little_grebes <- stiffkey_fen_data[common_name == "Common Buzzard", ]
+total_obs_stiffkey_fen <- sum(stiffkey_fen_little_grebes$obs, na.rm = TRUE)
+titchwell_marsh_little_grebes <- norfolk_ebird[norfolk_ebird$LOCALITY == "Titchwell Marsh" & norfolk_ebird$common_name == "Common Buzzard", ]
+total_obs_titchwell_marsh <- sum(titchwell_marsh_little_grebes$obs, na.rm = TRUE)
+
+# Compare the observation counts
+if (total_obs_stiffkey_fen > total_obs_titchwell_marsh) {
+  print("Little Grebes are more abundant at Stiffkey Fen.")
+} else if (total_obs_stiffkey_fen < total_obs_titchwell_marsh) {
+  print("Little Grebes are more abundant at Titchwell Marsh.")
+} else {
+  print("Little Grebes are equally abundant at Stiffkey Fen and Titchwell Marsh.")
+}
 
 # 5. Hard inference questions -----
