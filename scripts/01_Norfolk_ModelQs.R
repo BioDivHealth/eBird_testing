@@ -135,7 +135,7 @@ length(fieldfare_surveys_cringleford_marsh)
 # List all the bird species observed at Cromer Golf Course before 5pm on May 5th 2022.
 # Convert the date column to Date format
 norfolk_ebird$date <- as.Date(norfolk_ebird$date, format = "%d/%m/%Y")
-v
+
 names(norfolk_ebird)[names(norfolk_ebird) == "TIME OBSERVATIONS STARTED"] <- "time"
 norfolk_ebird$time <- as.POSIXct(norfolk_ebird$time, format = "%H:%M:%S")
 cromer_golf_course_data <- norfolk_ebird[grepl("Cromer Golf Course", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
@@ -203,12 +203,128 @@ species_at_cromer <- unique(cromer_golf_course_data$common_name)
 species_never_spotted <- setdiff(all_species, species_at_cromer)
 print(species_never_spotted)
 
-# Which two species are always observed together at Stiffkey fen?
 # Group data by survey
+survey_groups <- split(norfolk_ebird, norfolk_ebird$survey)
+
+# Initialize an empty list to store pairs of species observed together
+all_pairs <- list()
+
+# Iterate over each survey group
+for (survey_data in survey_groups) {
+  # Get unique species observed in the survey
+  unique_species <- unique(as.character(survey_data$common_name))
+  
+  # Check if there are enough unique species to form pairs
+  if (length(unique_species) >= 2) {
+    # Generate pairs of unique species
+    pairs <- combn(unique_species, 2, FUN = function(x) paste(sort(x), collapse = " and "))
+    
+    # Add pairs to the list
+    all_pairs <- c(all_pairs, list(pairs))
+  }
+}
+
+# Combine all pairs into a single vector
+all_pairs <- unlist(all_pairs)
+
+# Count the frequency of each pair
+pair_counts <- table(all_pairs)
+
+# Find the pair with the highest frequency
+most_likely_pair <- names(pair_counts)[which.max(pair_counts)]
+
+# Print the result
+print(most_likely_pair)
 
 
+# Which two species are most likely to be seen together at Stiffkey Fen?
+# Group data by survey
+survey_groups <- split(stiffkey_fen_data, stiffkey_fen_data$survey)
+
+# Initialize an empty list to store pairs of species observed together
+all_pairs <- list()
+
+# Iterate over each survey group
+for (survey_data in survey_groups) {
+  # Get unique species observed in the survey
+  unique_species <- unique(as.character(survey_data$common_name))
+  
+  # Check if there are enough unique species to form pairs
+  if (length(unique_species) >= 2) {
+    # Generate pairs of unique species
+    pairs <- combn(unique_species, 2, FUN = function(x) paste(sort(x), collapse = " and "))
+    
+    # Add pairs to the list
+    all_pairs <- c(all_pairs, list(pairs))
+  }
+}
+
+# Combine all pairs into a single vector
+all_pairs <- unlist(all_pairs)
+
+# Count the frequency of each pair
+pair_counts <- table(all_pairs)
+
+# Find the pair with the highest frequency
+most_likely_pair <- names(pair_counts)[which.max(pair_counts)]
+
+# Print the result
+print(most_likely_pair)
 
 
+# Which two species are most likely to be seen together at Stiffkey Fen?
+# Group data by survey
+survey_groups <- split(cromer_golf_course_data, cromer_golf_course_data$survey)
+
+# Initialize an empty list to store pairs of species observed together
+all_pairs <- list()
+
+# Iterate over each survey group
+for (survey_data in survey_groups) {
+  # Get unique species observed in the survey
+  unique_species <- unique(as.character(survey_data$common_name))
+  
+  # Check if there are enough unique species to form pairs
+  if (length(unique_species) >= 3) {
+    # Generate pairs of unique species
+    pairs <- combn(unique_species, 3, FUN = function(x) paste(sort(x), collapse = " and "))
+    
+    # Add pairs to the list
+    all_pairs <- c(all_pairs, list(pairs))
+  }
+}
+
+# Combine all pairs into a single vector
+all_pairs <- unlist(all_pairs)
+
+# Count the frequency of each pair
+pair_counts <- table(all_pairs)
+
+# Find the pair with the highest frequency
+most_likely_pair <- names(pair_counts)[which.max(pair_counts)]
+
+# Print the result
+print(most_likely_pair)
+
+# Which bird species can only be seen before 8 am at Sidestrand?
+sidestrand_data <- norfolk_ebird[norfolk_ebird$LOCALITY == "Sidestrand", ignore.case = TRUE]
+
+# Extract the time information from the "TIME" column (assuming it's in HH:MM:SS format)
+sidestrand_data$time <- as.POSIXct(sidestrand_data$time, format = "%H:%M:%S")
+
+## Extract the hour information from the "TIME" column
+sidestrand_data$hour <- as.numeric(format(sidestrand_data$time, "%H"))
+
+# Filter rows observed before 8 am
+before_8am_data <- sidestrand_data[sidestrand_data$hour < 8, ]
+after_2pm_data <- sidestrand_data[sidestrand_data$hour > 14, ]
+
+
+# Get unique species observed before 8 am
+species_before_8am <- unique(as.character(before_8am_data$common_name))
+species_before_8am
+species_after_2pm <- unique(as.character(after_6pm_data$common_name))
+species_after_2pm
 
 # 5. Hard inference questions -----
 
