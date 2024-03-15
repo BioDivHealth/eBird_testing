@@ -326,6 +326,230 @@ species_before_8am
 species_after_2pm <- unique(as.character(after_6pm_data$common_name))
 species_after_2pm
 
+# What is the third most abundant bird species at Titchwell Marsh?
+species_counts <- aggregate(obs ~ common_name, data = titchwell_data, FUN = sum)
+sorted_species <- species_counts[order(-species_counts$obs), ]
+third_most_abundant_species <- sorted_species$common_name[3]
+print(third_most_abundant_species)
+
+# Which bird species are only observed once at Snettisham RSPB Reserve?
+snettisham_data <- norfolk_ebird[norfolk_ebird$LOCALITY == "Snettisham RSPB Reserve", ignore.case = TRUE]
+species_counts <- table(snettisham_data$common_name)
+only_observed_species <- names(species_counts)[species_counts == 1]
+print(only_observed_species)
+
+# Where are Barnacle Goose more likely to be observed, at Stiffkey Fen or at Titchwell Marsh?
+stiffkey_fen_common_buzzard <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
+                                               grepl("Barnacle Goose", norfolk_ebird$common_name, ignore.case = TRUE), ]
+
+total_obs_stiffkey_fen <- sum(stiffkey_fen_common_buzzard$obs, na.rm = TRUE)
+
+titchwell_marsh_common_buzzard <- norfolk_ebird[grepl("Titchwell Marsh", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
+                                                  grepl("Barnacle Goose", norfolk_ebird$common_name, ignore.case = TRUE), ]
+total_obs_titchwell_marsh <- sum(titchwell_marsh_common_buzzard$obs, na.rm = TRUE)
+
+# Compare the observation counts
+if (total_obs_stiffkey_fen > total_obs_titchwell_marsh) {
+  print("Barnacle Goose are more abundant at Stiffkey Fen.")
+} else if (total_obs_stiffkey_fen < total_obs_titchwell_marsh) {
+  print("Barnacle Goose are more abundant at Titchwell Marsh.")
+} else {
+  print("Barnacle Goose are equally abundant at Stiffkey Fen and Titchwell Marsh.")
+}
+
+# Which bird species is most likely to be observed in a stationary position at Titchwell Marsh? 
+titchwell_data <- norfolk_ebird[grepl("Titchwell", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
+stationary_counts <- table(titchwell_data$common_name[titchwell_data$protocol == "Stationary"])
+most_stationary_species <- names(stationary_counts)[which.max(stationary_counts)]
+print(most_stationary_species)
+
+# Where are Black-bellied Plovers more abundant, at Stiffkey Fen or at Holme Dunes?
+# Filter the dataset for observations of Black-bellied Plovers at Stiffkey Fen
+stiffkey_data <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
+                                 grepl("Black-bellied Plover", norfolk_ebird$common_name, ignore.case = TRUE), ]
+holme_dunes_data <- norfolk_ebird[grepl("Holme Dunes", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
+                                 grepl("Black-bellied Plover", norfolk_ebird$common_name, ignore.case = TRUE), ]
+stiffkey_count <- nrow(stiffkey_data)
+holme_dunes_count <- nrow(holme_dunes_data)
+
+if (stiffkey_count > holme_dunes_count) {
+  print("Black-bellied Plovers are more abundant at Stiffkey Fen.")
+} else if (stiffkey_count < holme_dunes_count) {
+  print("Black-bellied Plovers are more abundant at Holme Dunes.")
+} else {
+  print("Black-bellied Plovers are equally abundant at both locations.")
+}
+
+# At which locality am I most likely to see a Ruddy Shelduck?
+ruddy_shelduck_data <- norfolk_ebird %>%
+  filter(common_name == "Ruddy Shelduck")
+
+# Count the occurrences of Ruddy Shelducks in each locality
+# Count the occurrences of Ruddy Shelducks in each locality
+locality_counts <- ruddy_shelduck_data %>%
+  group_by(LOCALITY) %>%
+  summarise(observation_count = n())
+
+# Identify the locality with the highest frequency of Ruddy Shelduck sightings
+most_likely_locality <- locality_counts %>%
+  filter(observation_count == max(observation_count)) %>%
+  pull(LOCALITY)
+
+# Print the result
+print(most_likely_locality)
+
+
+# Which five species are always observed together at Titchwell Marsh?
+survey_groups <- split(titchwell_data, titchwell_data$survey)
+
+# Initialize an empty list to store pairs of species observed together
+all_pairs <- list()
+
+# Iterate over each survey group
+for (survey_data in survey_groups) {
+  # Get unique species observed in the survey
+  unique_species <- unique(as.character(survey_data$common_name))
+  
+  # Check if there are enough unique species to form pairs
+  if (length(unique_species) >= 2) {
+    # Generate pairs of unique species
+    pairs <- combn(unique_species, 2, FUN = function(x) paste(sort(x), collapse = " and "))
+    
+    # Add pairs to the list
+    all_pairs <- c(all_pairs, list(pairs))
+  }
+}
+
+# Combine all pairs into a single vector
+all_pairs <- unlist(all_pairs)
+
+# Count the frequency of each pair
+pair_counts <- table(all_pairs)
+
+# Find the pair with the highest frequency
+most_likely_pair <- names(pair_counts)[which.max(pair_counts)]
+
+# Print the result
+print(most_likely_pair)
+
+# Which bird species can only be seen after 5 pm at Holme Dunes?
+observations_after_5pm <- holme_dunes_data %>%
+  filter(hour(time) >= 20)
+
+# Identify the unique bird species observed after 5 pm
+species_after_5pm <- unique(observations_after_5pm$common_name)
+
+# Print the result
+print(species_after_5pm)
+
+# Are higher numbers of birds observed in the morning or in the afternoon?
+norfolk_ebird$hour <- hour(norfolk_ebird$time)
+
+# Aggregate observations by hour
+observations_by_hour <- norfolk_ebird %>%
+  filter(!is.na(hour)) %>% 
+  group_by(hour) %>%
+  summarise(total_obs = sum(obs, na.rm = TRUE))
+
+# Divide the day into morning (before noon) and afternoon (noon onwards)
+morning_obs <- sum(observations_by_hour$total_obs[observations_by_hour$hour < 12])
+afternoon_obs <- sum(observations_by_hour$total_obs[observations_by_hour$hour >= 12])
+
+# Print the results
+if (morning_obs > afternoon_obs) {
+  print("Higher numbers of birds are observed in the morning.")
+} else if (morning_obs < afternoon_obs) {
+  print("Higher numbers of birds are observed in the afternoon.")
+} else {
+  print("Equal numbers of birds are observed in the morning and afternoon.")
+}
+
+
+# Are more bird species observed in the morning or in the afternoon?
+# Filter out rows where hour is NA
+filtered_data <- norfolk_ebird %>%
+  filter(!is.na(time))
+
+# Extract the hour from the time column
+filtered_data$hour <- hour(filtered_data$hour)
+
+# Aggregate observations by hour and count unique bird species observed
+observations_by_hour <- filtered_data %>%
+  group_by(hour) %>%
+  summarise(unique_species_count = n_distinct(common_name))
+
+# Divide the day into morning (before noon) and afternoon (noon onwards)
+morning_species_count <- sum(observations_by_hour$unique_species_count[observations_by_hour$hour < 12])
+afternoon_species_count <- sum(observations_by_hour$unique_species_count[observations_by_hour$hour >= 12])
+
+# Print the results
+if (morning_species_count > afternoon_species_count) {
+  print("More bird species are observed in the morning.")
+} else if (morning_species_count < afternoon_species_count) {
+  print("More bird species are observed in the afternoon.")
+} else {
+  print("Equal number of bird species are observed in the morning and afternoon.")
+}
+
+# What is the second rarest bird species at Whitlingham Country Park?
+# Filter the dataset for observations only from Whitlingham Country Park
+whitlingham_data <- norfolk_ebird %>%
+  filter(LOCALITY == "Whitlingham Country Park")
+
+# Count observations for each bird species
+species_obs_counts <- whitlingham_data %>%
+  group_by(common_name) %>%
+  summarise(obs_count = sum(obs, na.rm = TRUE)) %>%
+  arrange(obs_count)
+
+# Select the second rarest bird species
+second_rarest_species <- species_obs_counts$common_name[2]
+
+# Print the result
+print(second_rarest_species)
+
+# Where are Gray Herons more likely to be observed, at Holme Dunes or at Whitlingham Country Park?
+
+holme_dunes_data <- holme_dunes_data %>%
+  filter(common_name == "Gray Heron")
+
+whitlingham_data <- whitlingham_data %>%
+  filter(common_name == "Gray Heron")
+
+# Count the observations at each location
+holme_dunes_count <- nrow(holme_dunes_data)
+whitlingham_count <- nrow(whitlingham_data)
+
+# Compare the counts
+if (holme_dunes_count > whitlingham_count) {
+  print("Gray Herons are more likely to be observed at Holme Dunes.")
+} else if (holme_dunes_count < whitlingham_count) {
+  print("Gray Herons are more likely to be observed at Whitlingham Country Park.")
+} else {
+  print("Gray Herons are equally likely to be observed at both locations.")
+}
+
+# Which observer has the highest count of Marsh Harrier observations?
+marsh_harrier_data <- norfolk_ebird %>%
+  filter(common_name == "Western Marsh Harrier")
+
+# Group the data by observer and count the number of observations for each observer
+observer_counts <- marsh_harrier_data %>%
+  group_by(observer) %>%
+  summarise(observation_count = n())
+
+# Find the observer with the highest count of Marsh Harrier observations
+top_observer <- observer_counts %>%
+  filter(observation_count == min(observation_count)) %>%
+  pull(observer)
+
+# Print the result
+print(top_observer)
+
+# Are Gray Herons more likely to be seen alongside Black-headed Gulls or Eurasian Wrens?
+
+
+
 # 5. Hard inference questions -----
 
 
