@@ -547,6 +547,21 @@ top_observer <- observer_counts %>%
 print(top_observer)
 
 # Are Gray Herons more likely to be seen alongside Black-headed Gulls or Eurasian Wrens?
+# Filter the data for observations of Gray Herons, Black-headed Gulls, and Eurasian Wrens
+gray_heron_obs <- norfolk_ebird[norfolk_ebird$common_name == "Gray Heron", ]
+black_headed_gull_obs <- norfolk_ebird[norfolk_ebird$common_name == "Black-headed Gull", ]
+eurasian_wren_obs <- norfolk_ebird[norfolk_ebird$common_name == "Eurasian Wren", ]
+
+# Get the unique survey IDs for Gray Heron observations
+gray_heron_surveys <- unique(gray_heron_obs$survey)
+
+# Count the occurrences of Black-headed Gulls and Eurasian Wrens within the same surveys as Gray Herons
+freq_black_headed_gull <- sum(black_headed_gull_obs$survey %in% gray_heron_surveys)
+freq_eurasian_wren <- sum(eurasian_wren_obs$survey %in% gray_heron_surveys)
+
+# Output the frequencies
+freq_black_headed_gull
+freq_eurasian_wren
 
 
 
