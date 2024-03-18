@@ -705,6 +705,131 @@ if (total_obs_stiffkey_fen > total_obs_holme_dunes) {
   message("Common Ringed Plovers are equally likely to be observed at localities containing 'Stiffkey Fen' and 'Holme Dunes'.")
 }
 
+# 5. Hard inference questions ----
+
+# Which species are rarely observed but have been spotted in high numbers when seen?
+# Calculate the total number of observations for each species
+total_obs_per_species <- norfolk_ebird %>%
+  group_by(common_name) %>%
+  summarise(total_obs = sum(obs, na.rm = TRUE)) %>%
+  arrange(total_obs)
+
+# Calculate the total number of sightings for each species
+total_sightings_per_species <- norfolk_ebird %>%
+  group_by(common_name) %>%
+  summarise(total_sightings = n_distinct(survey)) %>%
+  arrange(total_sightings)
+
+# Join the two datasets
+species_obs_summary <- inner_join(total_obs_per_species, total_sightings_per_species, by = "common_name")
+
+# Calculate the average number of observations per sighting for each species
+species_obs_summary <- species_obs_summary %>%
+  mutate(avg_obs_per_sighting = total_obs / total_sightings) %>%
+  arrange(avg_obs_per_sighting)
+
+# Find species with low overall observation counts and high average observation counts
+rare_high_obs_species <- species_obs_summary %>%
+  filter(total_obs < median(total_obs) & avg_obs_per_sighting > median(avg_obs_per_sighting))
+
+# View the result
+print(rare_high_obs_species)
+
+
+# Which species are more commonly observed but have been spotted in low numbers when seen?
+# Calculate the total number of observations for each species
+total_obs_per_species <- norfolk_ebird %>%
+  group_by(common_name) %>%
+  summarise(total_obs = sum(obs, na.rm = TRUE)) %>%
+  arrange(desc(total_obs))
+
+# Calculate the total number of sightings for each species
+total_sightings_per_species <- norfolk_ebird %>%
+  group_by(common_name) %>%
+  summarise(total_sightings = n_distinct(survey)) %>%
+  arrange(desc(total_sightings))
+
+# Join the two datasets
+species_obs_summary <- inner_join(total_obs_per_species, total_sightings_per_species, by = "common_name")
+
+# Calculate the average number of observations per sighting for each species
+species_obs_summary <- species_obs_summary %>%
+  mutate(avg_obs_per_sighting = total_obs / total_sightings) %>%
+  arrange(avg_obs_per_sighting)
+
+# Find species with high overall observation counts and low average observation counts
+common_low_obs_species <- species_obs_summary %>%
+  filter(total_obs > median(total_obs) & avg_obs_per_sighting < median(avg_obs_per_sighting))
+
+# View the result
+print(common_low_obs_species)
+
+# What is the average number of Garganeys spotted per observation?
+# Filter the data for the Garganey species
+garganey_data <- norfolk_ebird %>%
+  filter(common_name == "Garganey")
+
+# Calculate the total number of observations for Garganey
+total_obs <- sum(garganey_data$obs, na.rm = TRUE)
+
+# Calculate the total number of sightings for Garganey
+total_sightings <- n_distinct(garganey_data$survey)
+
+# Calculate the average number of observations per sighting for Garganey
+avg_obs_per_sighting <- total_obs / total_sightings
+
+# Print the result
+print(avg_obs_per_sighting)
+
+# Was any breeding activity observed at Titchwell Marsh?
+names(titchwell_data)[names(titchwell_data) == "BREEDING CODE"] <- "breeding_code"
+names(titchwell_data)[names(titchwell_data) == "BREEDING CATEGORY"] <- "breeding_category"
+
+# Filter further to include observations with breeding activity
+breeding_activity_obs <- titchwell_data[!is.na(titchwell_data$breeding_code) | !is.na(titchwell_data$breeding_category), ]
+
+# Check if any observations with breeding activity were found
+if (nrow(breeding_activity_obs) > 0) {
+  print("Breeding activity was observed at Titchwell Marsh.")
+} else {
+  print("No breeding activity was observed at Titchwell Marsh.")
+}
+
+
+# Count the number of occurrences
+breeding_activity_count <- nrow(breeding_activity_obs)
+
+# Print the result
+print(breeding_activity_count)
+
+# Count occurrences of each bird species
+species_counts <- table(breeding_activity_obs$common_name)
+
+# Find the species with the highest count
+most_common_species <- names(which.max(species_counts))
+
+# Print the result
+print(most_common_species)
+
+# Examine hunting behaviours
+names(norfolk_ebird)[names(norfolk_ebird) == "SPECIES COMMENTS"] <- "species_comments"
+predatory_obs <- norfolk_ebird[grep("(hunt|hunting)", norfolk_ebird$species_comments, ignore.case = TRUE), ]
+
+# Print the filtered observations
+print(predatory_obs)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
