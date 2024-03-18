@@ -665,13 +665,13 @@ total_obs_count
 #titchwell_marsh_data$observation_time <- as.POSIXct(titchwell_data$observation_time, format = "%H:%M:%S")
 
 # Extract the hour of the day from observation times
-titchwell_marsh_data$hour <- format(titchwell_marsh_data$observation_time, "%H")
+titchwell_data$hour <- format(titchwell_data$time, "%H")
 
 # Group the data by date and find the bird species observed earliest each day
-earliest_species <- titchwell_marsh_data %>%
-  group_by(date) %>%
+earliest_species <- titchwell_data %>%
+  group_by(as.factor(date)) %>%
   slice(which.min(hour)) %>%
-  select(common_name)
+  select(common_name) 
 
 # Find the most frequently observed earliest species
 most_frequent_earliest_species <- names(sort(table(earliest_species$common_name), decreasing = TRUE))[1]
@@ -681,7 +681,29 @@ most_frequent_earliest_species
 
 
 
+# Where are Charadrius hiaticulas more likely to be observed, at Stiffkey Fen or at Holme Dunes?
+# Filter the dataset for observations of Common Ringed Plovers at Stiffkey Fen
+library(stringr)
+# Filter the dataset for observations of Common Ringed Plovers at localities containing "Stiffkey Fen"
+stiffkey_fen_common_ringed_plovers <- norfolk_ebird %>%
+  filter(str_detect(LOCALITY, "Stiffkey Fen") & common_name == "Common Ringed Plover")
 
+# Filter the dataset for observations of Common Ringed Plovers at localities containing "Holme Dunes"
+holme_dunes_common_ringed_plovers <- norfolk_ebird %>%
+  filter(str_detect(LOCALITY, "Holme Dunes") & common_name == "Common Ringed Plover")
+
+# Calculate the total number of observations for Common Ringed Plovers at each location
+total_obs_stiffkey_fen <- nrow(stiffkey_fen_common_ringed_plovers)
+total_obs_holme_dunes <- nrow(holme_dunes_common_ringed_plovers)
+
+# Compare the total number of observations to determine where Common Ringed Plovers are more likely to be observed
+if (total_obs_stiffkey_fen > total_obs_holme_dunes) {
+  message("Common Ringed Plovers are more likely to be observed at localities containing 'Stiffkey Fen'.")
+} else if (total_obs_stiffkey_fen < total_obs_holme_dunes) {
+  message("Common Ringed Plovers are more likely to be observed at localities containing 'Holme Dunes'.")
+} else {
+  message("Common Ringed Plovers are equally likely to be observed at localities containing 'Stiffkey Fen' and 'Holme Dunes'.")
+}
 
 
 
