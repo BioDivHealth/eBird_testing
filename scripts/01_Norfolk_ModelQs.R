@@ -547,25 +547,137 @@ top_observer <- observer_counts %>%
 print(top_observer)
 
 # Are Gray Herons more likely to be seen alongside Black-headed Gulls or Eurasian Wrens?
-# Filter the data for observations of Gray Herons, Black-headed Gulls, and Eurasian Wrens
-gray_heron_obs <- norfolk_ebird[norfolk_ebird$common_name == "Gray Heron", ]
-black_headed_gull_obs <- norfolk_ebird[norfolk_ebird$common_name == "Black-headed Gull", ]
-eurasian_wren_obs <- norfolk_ebird[norfolk_ebird$common_name == "Eurasian Wren", ]
+# Count the total number of observations for Gray Herons
+total_gray_heron_obs <- sum(norfolk_ebird$common_name == "Gray Heron", na.rm = TRUE)
 
-# Get the unique survey IDs for Gray Heron observations
-gray_heron_surveys <- unique(gray_heron_obs$survey)
+# Count the number of surveys containing Gray Herons
+gray_heron_surveys <- unique(norfolk_ebird$urvey[norfolk_ebird$common_name == "Gray Heron"])
 
-# Count the occurrences of Black-headed Gulls and Eurasian Wrens within the same surveys as Gray Herons
-freq_black_headed_gull <- sum(black_headed_gull_obs$survey %in% gray_heron_surveys)
-freq_eurasian_wren <- sum(eurasian_wren_obs$survey %in% gray_heron_surveys)
+# Group the data by survey and count the number of surveys where both Gray Herons and Black-headed Gulls are observed
+surveys_with_both_black_headed_gull <- norfolk_ebird %>%
+  group_by(survey) %>%
+  filter(any(common_name == "Gray Heron") & any(common_name == "Black-headed Gull")) %>%
+  summarise(count = n())
 
-# Output the frequencies
-freq_black_headed_gull
-freq_eurasian_wren
+# Group the data by survey and count the number of surveys where both Gray Herons and Eurasian Wrens are observed
+surveys_with_both_eurasian_wren <- norfolk_ebird %>%
+  group_by(survey) %>%
+  filter(any(common_name == "Gray Heron") & any(common_name == "Eurasian Wren")) %>%
+  summarise(count = n())
 
+# Calculate the proportions
+proportion_with_black_headed_gull <- nrow(surveys_with_both_black_headed_gull) / nrow(surveys_with_gray_heron)
+proportion_with_eurasian_wren <- nrow(surveys_with_both_eurasian_wren) / nrow(surveys_with_gray_heron)
 
+# Output the proportions
+proportion_with_black_headed_gull
+proportion_with_eurasian_wren
 
-# 5. Hard inference questions -----
+# At which location are Gray Herons and Black-headed gulls most commonly seen together?
+# Filter the data for Gray Herons and Black-headed Gulls
+heron_gull_data <- norfolk_ebird %>%
+  filter(common_name %in% c("Gray Heron", "Black-headed Gull"))
+
+# Group the filtered data by location and count the observations
+heron_gull_counts <- heron_gull_data %>%
+  group_by(LOCALITY) %>%
+  summarise(total_obs = n())
+
+# Find the location with the highest count of co-occurrences
+most_common_location <- heron_gull_counts %>%
+  filter(total_obs == max(total_obs))
+
+# Print the result
+most_common_location
+
+# Which two species are most commonly observed together at Cromer Golf Course?
+# Group data by survey
+survey_groups <- split(cromer_golf_course_data, cromer_golf_course_data$survey)
+
+# Initialize an empty list to store pairs of species observed together
+all_pairs <- list()
+
+# Iterate over each survey group
+for (survey_data in survey_groups) {
+  # Get unique species observed in the survey
+  unique_species <- unique(as.character(survey_data$common_name))
+  
+  # Check if there are enough unique species to form pairs
+  if (length(unique_species) >= 2) {
+    # Generate pairs of unique species
+    pairs <- combn(unique_species, 2, FUN = function(x) paste(sort(x), collapse = " and "))
+    
+    # Add pairs to the list
+    all_pairs <- c(all_pairs, list(pairs))
+  }
+}
+
+# Combine all pairs into a single vector
+all_pairs <- unlist(all_pairs)
+
+# Count the frequency of each pair
+pair_counts <- table(all_pairs)
+
+# Find the pair with the highest frequency
+most_likely_pair <- names(pair_counts)[which.max(pair_counts)]
+
+# Print the result
+print(most_likely_pair)
+
+# Find the pair with the lowes frequency
+least_likely_pair <- names(pair_counts)[which.min(pair_counts)]
+
+# Print the result
+print(least_likely_pair)
+
+# Which location has the least temporally consistent data?
+# Calculate standard deviation of observation dates for each location
+temporal_consistency <- norfolk_ebird %>%
+  group_by(LOCALITY) %>%
+  summarise(std_dev_date = sd(time, na.rm = TRUE))
+
+# Find the location with the highest standard deviation, indicating least temporal consistency
+least_consistent_location <- temporal_consistency %>%
+  filter(std_dev_date == max(std_dev_date))
+
+# Print the least consistent location
+least_consistent_location
+
+# What is the the latin name and total observation count of the most abundant bird species at Holme Dunes?
+
+# Group the data by common_name and calculate the total observations for each species
+species_obs_counts <- aggregate(obs ~ common_name, data = holme_dunes_data, FUN = sum, na.rm = TRUE)
+
+# Find the species with the highest total observations
+most_abundant_species <- species_obs_counts[which.max(species_obs_counts$obs), "common_name"]
+
+# Filter the data for the most abundant species at Holme Dunes
+species_data <- holme_dunes_data[holme_dunes_data$common_name == most_abundant_species, ]
+
+# Calculate the total observation count for the most abundant species
+total_obs_count <- sum(species_data$obs, na.rm = TRUE)
+
+# Print the result
+total_obs_count
+
+# Which bird species is usually observed earliest every day at Titchwell Marsh?
+# Convert observation times to POSIXct format
+#titchwell_marsh_data$observation_time <- as.POSIXct(titchwell_data$observation_time, format = "%H:%M:%S")
+
+# Extract the hour of the day from observation times
+titchwell_marsh_data$hour <- format(titchwell_marsh_data$observation_time, "%H")
+
+# Group the data by date and find the bird species observed earliest each day
+earliest_species <- titchwell_marsh_data %>%
+  group_by(date) %>%
+  slice(which.min(hour)) %>%
+  select(common_name)
+
+# Find the most frequently observed earliest species
+most_frequent_earliest_species <- names(sort(table(earliest_species$common_name), decreasing = TRUE))[1]
+
+# Print the result
+most_frequent_earliest_species
 
 
 
