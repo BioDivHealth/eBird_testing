@@ -952,9 +952,144 @@ least_diverse_species_count <- least_diverse_location$unique_species_count
 cat("The location with the lowest diversity of birds is", least_diverse_location_name, "with", least_diverse_species_count, "unique species observed.\n")
 
 # Which birds have been seen on cloudy days?
+names(norfolk_ebird)[names(norfolk_ebird) == "TRIP COMMENTS"] <- "trip_comments"
 
+# Filter the data for rows where trip comments contain "cloud" or "cloudy"
+cloudy_data <- norfolk_ebird %>%
+  filter(str_detect(trip_comments, "rain") | str_detect(trip_comments, "rainy"))
 
+# Extract unique bird species observed on cloudy days
+cloudy_birds <- unique(cloudy_data$common_name)
 
+# Print the list of bird species observed on cloudy days
+cat("Bird species observed on cloudy days:\n")
+cat(cloudy_birds, sep = ", ")
+
+# Which bird species are exclusively seen in fens?c
+# Filter the dataset to include only records from fens
+fen_data <- norfolk_ebird %>%
+  filter(str_detect(LOCALITY, "fen")) 
+         
+# Count occurrences of each species
+species_counts <- table(fen_data$common_name)
+
+# Find the species with the highest count
+names(sort(species_counts, decreasing = TRUE))
+
+# Print the most common species
+print(most_common_species)
+
+# What species are most commonly reported by group surveys?
+names(norfolk_ebird)[names(norfolk_ebird) == "GROUP IDENTIFIER"] <- "group"
+
+# Filter the dataset for group surveys
+group_survey_data <- norfolk_ebird[!is.na(norfolk_ebird$group), ]
+
+# Count the occurrences of each species in group surveys
+species_counts <- table(group_survey_data$common_name)
+
+# Sort the species counts in descending order
+species_counts_sorted <- sort(species_counts, decreasing = TRUE)
+
+# Get the top species (or species tied for the top)
+top_species <- names(species_counts_sorted[species_counts_sorted == max(species_counts_sorted)])
+
+# Print the top species
+print(top_species)
+
+# Which bird species are most likely to have species notes?
+# Filter the dataset for species with non-empty species notes
+species_with_notes <- norfolk_ebird[!is.na(norfolk_ebird$species_comments), ]
+
+# Count the occurrences of each species with notes
+species_counts <- table(species_with_notes$common_name)
+
+# Sort the species counts in descending order
+species_counts_sorted <- sort(species_counts, decreasing = TRUE)
+
+# Get the top species (or species tied for the top)
+top_species <- names(species_counts_sorted[species_counts_sorted == max(species_counts_sorted)])
+
+# Print the top species
+print(top_species)
+
+# Calculate the total number of species observed per checklist for each observer
+observer_species_counts <- aggregate(obs ~ observer, data = norfolk_ebird, FUN = function(x) length(unique(x)))
+
+# Calculate the average number of species observed per checklist for each observer
+observer_avg_species <- aggregate(obs ~ observer, data = norfolk_ebird, FUN = function(x) mean(length(unique(x))))
+
+# Find the observer with the highest average number of species per checklist
+max_avg_species_observer <- observer_avg_species[which.max(observer_avg_species$obs), ]
+
+# Print the observer with the highest average number of species per checklist
+print(max_avg_species_observer)
+
+# What time of day am I most likely to spot a Smew?
+# Filter the data for observations of Smew
+smew_obs <- norfolk_ebird[norfolk_ebird$common_name == "Smew", ]
+
+# Extract the hour component from the observation times
+#smew_obs$hour <- as.integer(format(smew_obs$observation_time, "%H"))
+
+# Count the frequency of observations for each hour
+hourly_counts <- table(smew_obs$hour)
+
+# Find the hour with the highest frequency of observations
+most_common_hour <- names(hourly_counts)[which.max(hourly_counts)]
+
+# Print the most common hour for spotting Smew
+print(most_common_hour)
+
+# are weekends or weekdays better for spotting birds?
+# Convert observation dates to weekdays (Monday = 1, ..., Sunday = 7)
+norfolk_ebird$weekday <- weekdays(norfolk_ebird$date)
+
+# Define a function to categorize days as either weekday or weekend
+categorize_day <- function(day) {
+  if (day %in% c("Saturday", "Sunday")) {
+    return("Weekend")
+  } else {
+    return("Weekday")
+  }
+}
+
+# Apply the categorize_day function to create a new column indicating weekday or weekend
+norfolk_ebird$day_type <- sapply(norfolk_ebird$day_of_week, categorize_day)
+
+# Count the frequency of observations on weekdays and weekends
+observation_counts <- table(norfolk_ebird$day_type)
+
+# Print the observation counts
+print(observation_counts)
+
+# Calculate the total number of unique species observed on weekdays and weekends
+weekday_species <- length(unique(norfolk_ebird$common_name[norfolk_ebird$day_type == "Weekday"]))
+weekend_species <- length(unique(norfolk_ebird$common_name[norfolk_ebird$day_type == "Weekend"]))
+
+# Calculate the average number of unique species observed
+average_weekday_species <- weekday_species / sum(norfolk_ebird$day_type == "Weekday")
+average_weekend_species <- weekend_species / sum(norfolk_ebird$day_type == "Weekend")
+
+# Print the results
+print(paste("Average number of unique species observed on weekdays:", average_weekday_species))
+print(paste("Average number of unique species observed on weekends:", average_weekend_species))
+
+# Which birds might be overrepresented?
+# Calculate the overall proportion of each bird species in the dataset
+species_proportion <- prop.table(table(norfolk_ebird$common_name))
+
+# Determine the expected proportion of each species based on their overall frequency
+expected_proportion <- mean(species_proportion)
+
+# Calculate the ratio of observed proportion to expected proportion
+overrepresentation_ratio <- species_proportion / expected_proportion
+
+# Identify species where the observed proportion is significantly higher than the expected proportion
+overrepresented_species <- names(overrepresentation_ratio[overrepresentation_ratio > 1])
+
+# Print the overrepresented species
+print(overrepresented_species)
 
 
 
