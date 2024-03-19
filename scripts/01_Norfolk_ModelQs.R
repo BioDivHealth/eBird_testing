@@ -818,17 +818,140 @@ predatory_obs <- norfolk_ebird[grep("(hunt|hunting)", norfolk_ebird$species_comm
 # Print the filtered observations
 print(predatory_obs)
 
+# Which bird species are exclusively seen in the northwest of Norfolk?
+# Find the minimum and maximum latitude and longitude values in the dataset
+min_longitude <- min(norfolk_ebird$LONGITUDE, na.rm = TRUE)
+max_longitude <- max(norfolk_ebird$LONGITUDE, na.rm = TRUE)
+min_latitude <- min(norfolk_ebird$LATITUDE, na.rm = TRUE)
+max_latitude <- max(norfolk_ebird$LATITUDE, na.rm = TRUE)
 
+# Calculate the northwest bounds based on the maximum and minimum values
+northwest_bounds <- list(
+  min_longitude = min_longitude,
+  max_longitude = (min_longitude + max_longitude) / 2,  # Adjust as needed
+  min_latitude = (min_latitude + max_latitude) / 2,  # Adjust as needed
+  max_latitude = max_latitude
+)
 
+# Filter the norfolk_ebird dataset based on the calculated boundaries
+northwest_data <- norfolk_ebird[
+  norfolk_ebird$LONGITUDE >= northwest_bounds$min_longitude &
+    norfolk_ebird$LONGITUDE <= northwest_bounds$max_longitude &
+    norfolk_ebird$LATITUDE >= northwest_bounds$min_latitude &
+    norfolk_ebird$LATITUDE <= northwest_bounds$max_latitude,
+]
 
+# Identify bird species observed in the northwest
+northwest_species <- unique(northwest_data$common_name)
 
+# Identify bird species observed in other regions
+other_species <- unique(norfolk_ebird$common_name[!norfolk_ebird$common_name %in% northwest_species])
 
+# Identify bird species exclusive to the northwest
+exclusive_species <- setdiff(northwest_species, other_species)
 
+# Print or further analyze the exclusive bird species
+print(exclusive_species)
 
+# Filter dataset for observations in the northwest region
+northwest_data <- norfolk_ebird[
+  norfolk_ebird$LONGITUDE >= northwest_bounds$min_longitude &
+    norfolk_ebird$LONGITUDE <= northwest_bounds$max_longitude &
+    norfolk_ebird$LATITUDE >= northwest_bounds$min_latitude &
+    norfolk_ebird$LATITUDE <= northwest_bounds$max_latitude,
+]
 
+# Identify bird species observed exclusively in the northwest
+northwest_species <- unique(northwest_data$common_name)
 
+# Filter dataset to exclude observations from the northwest region
+non_northwest_data <- norfolk_ebird[
+  !(norfolk_ebird$LONGITUDE >= northwest_bounds$min_longitude &
+      norfolk_ebird$LONGITUDE <= northwest_bounds$max_longitude &
+      norfolk_ebird$LATITUDE >= northwest_bounds$min_latitude &
+      norfolk_ebird$LATITUDE <= northwest_bounds$max_latitude),
+]
 
+# Identify bird species observed outside the northwest region
+non_northwest_species <- unique(non_northwest_data$common_name)
 
+# Find bird species exclusive to the northwest region
+exclusive_northwest_species <- setdiff(northwest_species, non_northwest_species)
+
+# Print or further analyze exclusive northwest species
+print(exclusive_northwest_species)
+
+# Which is the southernmost species of plover?
+
+# Filter for plover species
+plover_data <- norfolk_ebird %>%
+  filter(grepl("Plover", common_name, ignore.case = TRUE))
+
+# Identify the southernmost species
+southernmost_plover <- plover_data %>%
+  filter(LATITUDE == min(LATITUDE, na.rm = TRUE))
+
+# Output the result
+southernmost_plover$common_name
+
+# Which species are always solitary?
+
+# Group the data by common name and count the unique observation counts
+species_counts <- norfolk_ebird %>%
+  group_by(common_name) %>%
+  summarise(unique_obs_counts = n_distinct(obs))
+
+# Filter for species with only one unique observation count
+solitary_species <- species_counts %>%
+  filter(unique_obs_counts == 1)
+
+# Output the result
+solitary_species$common_name
+
+# At which location are the largest groups of the same bird species observed?
+grouped_data <- norfolk_ebird %>%
+  group_by(common_name) %>%
+  group_by(LOCALITY) %>%
+  summarise(group_size = n())
+
+# Find the location with the largest group size
+largest_group <- grouped_data %>%
+  arrange(desc(group_size)) %>%
+  slice(1)
+
+# Extract the location with the largest group size
+largest_location <- largest_group$LOCALITY
+
+# Which is the location with the highest diversity of birds?
+location_diversity <- norfolk_ebird %>%
+  group_by(LOCALITY) %>%
+  summarise(unique_species_count = n_distinct(common_name))
+
+# Find the location with the highest diversity of birds
+most_diverse_location <- location_diversity %>%
+  arrange(desc(unique_species_count)) %>%
+  slice(1)
+
+# Extract the location with the highest diversity
+most_diverse_location_name <- most_diverse_location$LOCALITY
+most_diverse_species_count <- most_diverse_location$unique_species_count
+
+# Print the result
+cat("The location with the highest diversity of birds is", most_diverse_location_name, "with", most_diverse_species_count, "unique species observed.\n")
+
+# Find the location with the lowest diversity of birds
+least_diverse_location <- location_diversity %>%
+  arrange(unique_species_count) %>%
+  slice(1)
+
+# Extract the location with the lowest diversity
+least_diverse_location_name <- least_diverse_location$LOCALITY
+least_diverse_species_count <- least_diverse_location$unique_species_count
+
+# Print the result
+cat("The location with the lowest diversity of birds is", least_diverse_location_name, "with", least_diverse_species_count, "unique species observed.\n")
+
+# Which birds have been seen on cloudy days?
 
 
 
