@@ -125,7 +125,7 @@ sum(stif_may_2023_data$obs, na.rm = TRUE)
 # Provide the average duration of observer effort per survey at Cringleford Marsh.
 cring_data <- norfolk_ebird[grepl("Cringleford Marsh", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
 observer_effort_per_survey <- aggregate(duration ~ survey, data = cring_data, FUN = sum)
-mean(observer_effort_per_survey$duration)
+mean(cring_data$duration, na.rm = TRUE)
 
 # How many surveys conducted at Cringleford Marsh included Coal tit?
 cring_data <- norfolk_ebird[grepl("Cringleford Marsh", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
@@ -170,7 +170,7 @@ location_max_observers <- observers_per_location[which.max(observers_per_locatio
 
 # Which bird is most often seen stationary?
 names(norfolk_ebird)[names(norfolk_ebird) == "PROTOCOL TYPE"] <- "protocol"
-stationary_data <- norfolk_ebird[norfolk_ebird$protocol == "stationary", ]
+stationary_data <- norfolk_ebird[norfolk_ebird$protocol == "Stationary", ]
 stationary_counts <- table(stationary_data$common_name)
 most_stationary_bird <- names(stationary_counts)[which.max(stationary_counts)]
 
@@ -910,9 +910,9 @@ solitary_species$common_name
 
 # At which location are the largest groups of the same bird species observed?
 grouped_data <- norfolk_ebird %>%
-  group_by(common_name) %>%
-  group_by(LOCALITY) %>%
-  summarise(group_size = n())
+  group_by(common_name, LOCALITY) %>%
+ # group_by(LOCALITY) %>%
+  summarise(group_size = obs)
 
 # Find the location with the largest group size
 largest_group <- grouped_data %>%
