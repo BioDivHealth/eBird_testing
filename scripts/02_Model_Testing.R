@@ -5,6 +5,7 @@
 # 1. Load libraries -----
 library(tidyverse)
 library(esquisse)
+library(viridis)
 
 # 2. Load data  ----
 model_testing <- read_csv("data/model_testing.csv")
@@ -24,3 +25,22 @@ ggplot(model_testing) +
   facet_wrap(vars(model))
 
 # 2 - By Query Type
+ggplot(model_testing) +
+  aes(x = quality_scoring, fill = query_type) +
+  geom_bar() +
+  scale_fill_viridis_d(option = "plasma", direction = 1) +
+  theme_classic() +
+  facet_wrap(vars(model))
+
+ # 3 - Time-specific
+model_testing %>%
+  filter(time_spec %in% "S ") %>%
+  ggplot() +
+  aes(x = quality_scoring) +
+  geom_bar(fill = "#EBBB06") +
+  theme_classic() +
+  facet_wrap(vars(model))
+
+
+
+
