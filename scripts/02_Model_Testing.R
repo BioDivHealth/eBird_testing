@@ -10,6 +10,8 @@ library(esquisse)
 model_testing <- read_csv("data/model_testing.csv")
 
 # 3. Plot comparisons ----
+
+# 1 - Simple truth breakdown 
 ggplot(model_testing) +
   aes(x = quality_scoring, fill = quality_scoring) +
   geom_bar() +
@@ -20,3 +22,5 @@ ggplot(model_testing) +
   ) +
   theme_classic() +
   facet_wrap(vars(model))
+
+# 2 - By Query Type
