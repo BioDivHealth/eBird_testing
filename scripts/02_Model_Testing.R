@@ -34,7 +34,7 @@ ggplot(model_testing) +
 
  # 3 - Time-specific
 model_testing %>%
-  filter(time_spec %in% "S ") %>%
+  filter(time_spec %in% "S") %>%
   ggplot() +
   aes(x = quality_scoring) +
   geom_bar(fill = "#EBBB06") +
