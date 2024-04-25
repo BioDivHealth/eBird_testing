@@ -1,190 +1,196 @@
 # Testing questions - getting correct answers for question answering
+# For comparison with output of cambridgeshire models
 # Elise Gallois, elise.gallois94@gmail.com
-# 11th March 2024
+# 25th April 2024
 
 # 1. Load libraries -----
 library(tidyverse)
 
 # 2. Load data and save as RData for future use ----
 
-#norfolk_ebird <- read_csv("~/Downloads/norfolk_ebird.csv") # too large for github
-#save(norfolk_ebird, file = "data/norfolk_birds.RData")
-load("data/norfolk_birds.RData")
-View(norfolk_ebird)
+#cambridghe_ebird <- read_csv("data/cambridgeshire_sample.csv")
+#save(cambridghe_ebird, file = "data/cambridghe_ebird.RData")
+load("data/cambridghe_ebird.RData")
+cambridge_ebird <- cambridghe_ebird
+View(cambridge_ebird)
 
 # 3. Data retrieval questions ----
-#What is the total count of birds observed in Norfolk?
-names(norfolk_ebird)[names(norfolk_ebird) == "OBSERVATION COUNT"] <- "obs"
-norfolk_ebird$obs <- as.numeric(norfolk_ebird$obs)
-sum(norfolk_ebird$obs, na.rm = TRUE) # 1140423
+#What is the total count of birds observed in cambridgeshire?
+names(cambridge_ebird)[names(cambridge_ebird) == "OBSERVATION COUNT"] <- "obs"
+cambridge_ebird$obs <- as.numeric(cambridge_ebird$obs)
+sum(cambridge_ebird$obs, na.rm = TRUE) # 110542
 
-# Provide the average duration of observer effort per survey in Norfolk.
-names(norfolk_ebird)[names(norfolk_ebird) == "SAMPLING EVENT IDENTIFIER"] <- "survey"
-norfolk_ebird$survey <- as.factor(norfolk_ebird$survey)
-names(norfolk_ebird)[names(norfolk_ebird) == "DURATION MINUTES"] <- "duration"
-mean(norfolk_ebird$duration, na.rm = TRUE) #115.8326
+# Provide the average duration of observer effort per survey in cambridgeshire.
+names(cambridge_ebird)[names(cambridge_ebird) == "SAMPLING EVENT IDENTIFIER"] <- "survey"
+cambridge_ebird$survey <- as.factor(cambridge_ebird$survey)
+names(cambridge_ebird)[names(cambridge_ebird) == "DURATION MINUTES"] <- "duration"
+mean(cambridge_ebird$duration, na.rm = TRUE) #104.7272
 
-# How many surveys were conducted at Cley & Salthouse Marshes?
-sum(grepl("Cley", norfolk_ebird$LOCALITY, ignore.case = TRUE))
+# How many surveys were conducted at Grafham Water?
+sum(grepl("Grafham Water", cambridge_ebird$LOCALITY, ignore.case = TRUE))
 
-# List all the bird species observed at Titchwell Marsh.
-sum(grepl("Titchwell", norfolk_ebird$LOCALITY, ignore.case = TRUE))
-names(norfolk_ebird)[names(norfolk_ebird) == "COMMON NAME"] <- "common_name"
-titchwell_data <- norfolk_ebird[grepl("Titchwell", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
-unique_species <- unique(titchwell_data$common_name)
+# How many unique bird species have been observed at Smithy Fen.
+sum(grepl("Smithy Fen", cambridge_ebird$LOCALITY, ignore.case = TRUE))
+names(cambridge_ebird)[names(cambridge_ebird) == "COMMON NAME"] <- "common_name"
+smithy_data <- cambridge_ebird[grepl("Smithy Fen", cambridge_ebird$LOCALITY, ignore.case = TRUE), ]
+unique_species <- unique(smithy_data$common_name)
 unique_species
 
-# What is the total count of Bearded Reedling observed in Norfolk?
-norfolk_ebird$common_name <- as.factor(norfolk_ebird$common_name)
-sum(norfolk_ebird$obs[norfolk_ebird$common_name == 'Bearded Reedling'], na.rm = TRUE)
+# What is the total count of Bearded Reedling observed in cambridgeshire?
+cambridge_ebird$common_name <- as.factor(cambridge_ebird$common_name)
+sum(cambridge_ebird$obs[cambridge_ebird$common_name == 'Bearded Reedling'], na.rm = TRUE)
 
-# How many surveys recorded sightings of the Western Marsh Harrier in Norfolk?
-marsh_harrier_surveys <- unique(norfolk_ebird$survey[norfolk_ebird$common_name == "Western Marsh Harrier"])
-length(marsh_harrier_surveys) # 1750
+# How many surveys recorded sightings of the Western Marsh Harrier in cambridgeshire?
+marsh_harrier_surveys <- unique(cambridge_ebird$survey[cambridge_ebird$common_name == "Western Marsh Harrier"])
+length(marsh_harrier_surveys) # 162
 
-# What is the average number of bird species observed per survey at Blakeney?
-blakeney_data <- norfolk_ebird[grepl("Blakeney", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
-unique_common_names_per_survey <- aggregate(common_name ~ survey, data = blakeney_data, FUN = function(x) length(unique(x)))
+# What is the average number of bird species observed per survey at Wicken Fen NNR?
+wicken_data <- cambridge_ebird[grepl("Wicken Fen NNR", cambridge_ebird$LOCALITY, ignore.case = TRUE), ]
+unique_common_names_per_survey <- aggregate(common_name ~ survey, data = wicken_data, FUN = function(x) length(unique(x)))
 mean(unique_common_names_per_survey$common_name)
 
-# Provide the total count of Black Headed Gull observed at NWT Holme Dunes.
-black_headed_gull_obs <- norfolk_ebird[norfolk_ebird$common_name == "Black-headed Gull" & grepl("NWT Holme Dunes", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
+# Provide the total count of Black Headed Gull observed at Roswell Pits
+black_headed_gull_obs <- cambridge_ebird[cambridge_ebird$common_name == "Black-headed Gull" & grepl("Roswell Pits", cambridge_ebird$LOCALITY, ignore.case = TRUE), ]
 sum(black_headed_gull_obs$obs, na.rm = TRUE)
 
-#How many observations were recorded at Happisburgh?
-happisburgh_data <- norfolk_ebird[grepl("Happisburgh", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
-nrow(happisburgh_data)
+# How many observations were recorded at Cambridge Botanic Garden?
+botanic_data <- cambridge_ebird[grepl("Cambridge Botanic Garden", cambridge_ebird$LOCALITY, ignore.case = TRUE), ]
+nrow(botanic_data)
 
 #List all the exotic bird species.
-names(norfolk_ebird)[names(norfolk_ebird) == "EXOTIC CODE"] <- "exotic"
-exotic_data <- norfolk_ebird[!is.na(norfolk_ebird$exotic), ]
+names(cambridge_ebird)[names(cambridge_ebird) == "EXOTIC CODE"] <- "exotic"
+exotic_data <- cambridge_ebird[!is.na(cambridge_ebird$exotic), ]
 nrow(exotic_data)
 
 # Which is the least common bird observed?
-obs_per_common_name <- aggregate(obs ~ common_name, data = norfolk_ebird, FUN = sum)
+obs_per_common_name <- aggregate(obs ~ common_name, data = cambridge_ebird, FUN = sum)
 lowest_obs_common_name <- obs_per_common_name[which.min(obs_per_common_name$obs), "common_name"]
 lowest_obs_common_name_df <- data.frame(common_name = lowest_obs_common_name)
 
 # Which is the most common bird observed?
-obs_per_common_name <- aggregate(obs ~ common_name, data = norfolk_ebird, FUN = sum)
+obs_per_common_name <- aggregate(obs ~ common_name, data = cambridge_ebird, FUN = sum)
 highest_obs_common_name <- obs_per_common_name[which.max(obs_per_common_name$obs), "common_name"]
 highest_obs_common_name_df <- data.frame(common_name = highest_obs_common_name)
 
-# What are the 3 most common birds at Hardwick Flood Lagoon??
-hardwick_data <- norfolk_ebird[grepl("Hardwick Flood Lagoon", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
-obs_per_common_name <- aggregate(obs ~ common_name, data = hardwick_data, FUN = sum)
+# What are the 3 most common birds at Coe Fen?
+coe_data <- cambridge_ebird[grepl("Coe Fen", cambridge_ebird$LOCALITY, ignore.case = TRUE), ]
+obs_per_common_name <- aggregate(obs ~ common_name, data = coe_data, FUN = sum)
 sorted_obs_per_common_name <- obs_per_common_name[order(-obs_per_common_name$obs), ]
 head(sorted_obs_per_common_name$common_name, 3)
 
-# What are the 3 most common birds in Norfolk?
-obs_per_common_name <- aggregate(obs ~ common_name, data = norfolk_ebird, FUN = sum)
+# What are the 3 most common birds in cambridgeshire?
+obs_per_common_name <- aggregate(obs ~ common_name, data = cambridge_ebird, FUN = sum)
 sorted_obs_per_common_name <- obs_per_common_name[order(-obs_per_common_name$obs), ]
 head(sorted_obs_per_common_name$common_name, 3)
 
-# Rank the top 10 most common bird species observed at Cromer Golf Course.
-golf_data <- norfolk_ebird[grepl("Cromer Golf Course", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
-obs_per_common_name <- aggregate(obs ~ common_name, data = golf_data, FUN = sum)
+# Rank the top 10 most common bird species observed at Grantchester Meadows.
+grantchester_data <- cambridge_ebird[grepl("Grantchester Meadows", cambridge_ebird$LOCALITY, ignore.case = TRUE), ]
+obs_per_common_name <- aggregate(obs ~ common_name, data = grantchester_data, FUN = sum)
 sorted_obs_per_common_name <- obs_per_common_name[order(-obs_per_common_name$obs), ]
-head(sorted_obs_per_common_name$common_name, 3)
+head(sorted_obs_per_common_name$common_name, 10)
 
-# What is the total count of Carrion Crows observed in Norfolk?
-carrion_crow_data <- norfolk_ebird[norfolk_ebird$common_name == "Carrion Crow", ]
+# What is the total count of Carrion Crows observed in cambridgeshire?
+carrion_crow_data <- cambridge_ebird[cambridge_ebird$common_name == "Carrion Crow", ]
 total_obs_carrion_crow <- sum(carrion_crow_data$obs, na.rm = TRUE)
 
-# What is the average number of bird species observed per survey at Stiffkey Fen?
-stiffkey_fen_data <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
-unique_species_per_survey <- aggregate(common_name ~ survey, data = stiffkey_fen_data, FUN = function(x) length(unique(x)))
+# What is the average number of bird species observed per survey at Grafham Water?
+grafham_data <- cambridge_ebird[grepl("Grafham Water", cambridge_ebird$LOCALITY, ignore.case = TRUE), ]
+unique_species_per_survey <- aggregate(common_name ~ survey, data = grafham_data, FUN = function(x) length(unique(x)))
 mean(unique_species_per_survey$common_name)
 
-# Provide the total count of Manx Shearwaters observed at Sidestrand.
-manx_shearwater_blakeney_data <- norfolk_ebird[norfolk_ebird$common_name == "Manx Shearwater" & grepl("Sidestrand", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
-total_obs_manx_shearwater_blakeney <- sum(manx_shearwater_blakeney_data$obs, na.rm = TRUE)
+# Provide the total count of Arctic Tern observed at Fen Drayton Lakes RSPB Reserve.
+manx_shearwater_drayton_data <- cambridge_ebird[cambridge_ebird$common_name == "Arctic Tern" & grepl("Fen Drayton", cambridge_ebird$LOCALITY, ignore.case = TRUE), ]
+total_obs_manx_shearwater_drayton <- sum(manx_shearwater_drayton_data$obs, na.rm = TRUE)
+total_obs_manx_shearwater_drayton
 
 # How many surveys were conducted on 5th May?
-names(norfolk_ebird)[names(norfolk_ebird) == "OBSERVATION DATE"] <- "date"
-norfolk_ebird$date <- as.Date(norfolk_ebird$date, format = "%d/%m/%Y")
-may_5_data <- norfolk_ebird[format(norfolk_ebird$date, "%m-%d") == "05-05", ]
+names(cambridge_ebird)[names(cambridge_ebird) == "OBSERVATION DATE"] <- "date"
+cambridge_ebird$date <- as.Date(cambridge_ebird$date, format = "%d/%m/%Y")
+may_5_data <- cambridge_ebird[format(cambridge_ebird$date, "%m-%d") == "05-05", ]
 length(unique(may_5_data$survey))
 
 # How many observations were conducted on 5th May?
 sum(may_5_data$obs, na.rm = TRUE)
 length(unique(may_5_data$common_name))
 
-# How many exotic species were there at Stiffkey Fen
-stiffkey_fen_data <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
-exotic_data <- stiffkey_fen_data[!is.na(stiffkey_fen_data$exotic), ]
+# How many exotic species were there at Grafham Water
+grafham_data <- cambridge_ebird[grepl("Grafham Water", cambridge_ebird$LOCALITY, ignore.case = TRUE), ]
+exotic_data <- grafham_data[!is.na(grafham_data$exotic), ]
 nrow(exotic_data)
 
-# What is the total count of birds observed at Stiffkey Fen in the first week of May 2023?
-norfolk_ebird$date <- as.Date(norfolk_ebird$date, format = "%d/%m/%Y")
-stif_may_2023_data <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
-                                      norfolk_ebird$date >= as.Date("2022-05-01") & 
-                                      norfolk_ebird$date <= as.Date("2022-05-07"), ]
-sum(stif_may_2023_data$obs, na.rm = TRUE)
+# What is the total count of birds observed at Dernford Reservoir in the first week of May 2023?
+cambridge_ebird$date <- as.Date(cambridge_ebird$date, format = "%d/%m/%Y")
+dernford_data <- cambridge_ebird[grepl("Dernford Researvoir", cambridge_ebird$LOCALITY, ignore.case = TRUE) & 
+                                      cambridge_ebird$date >= as.Date("2023-05-01") & 
+                                      cambridge_ebird$date <= as.Date("2023-05-07"), ]
+sum(dernford_data$obs, na.rm = TRUE)
 
-# Provide the average duration of observer effort per survey at Cringleford Marsh.
-cring_data <- norfolk_ebird[grepl("Cringleford Marsh", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
-observer_effort_per_survey <- aggregate(duration ~ survey, data = cring_data, FUN = sum)
-mean(cring_data$duration, na.rm = TRUE)
+# Provide the average duration of observer effort per survey at Paradise LNR
+paradise_data <- cambridge_ebird[grepl("Paradise LNR", cambridge_ebird$LOCALITY, ignore.case = TRUE), ]
+observer_effort_per_survey <- aggregate(duration ~ survey, data = paradise_data, FUN = sum)
+mean(paradise_data$duration, na.rm = TRUE)
 
-# How many surveys conducted at Cringleford Marsh included Coal tit?
-cring_data <- norfolk_ebird[grepl("Cringleford Marsh", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
-fieldfare_surveys_cringleford_marsh <- unique(cring_data$survey[cring_data$common_name == "Coal Tit"])
-length(fieldfare_surveys_cringleford_marsh)
+# How many surveys conducted at Paradise LNR included Coal tit?
+paradise_data <- cambridge_ebird[grepl("Paradise LNR", cambridge_ebird$LOCALITY, ignore.case = TRUE), ]
+fieldfare_surveys_paradise <- unique(paradise_data$survey[paradise_data$common_name == "Mallard"])
+length(fieldfare_surveys_paradise)
 
-# List all the bird species observed at Cromer Golf Course before 5pm on May 5th 2022.
+# List all the bird species observed at Grantchester meadows before 5pm on May 20th 2022.
 # Convert the date column to Date format
-norfolk_ebird$date <- as.Date(norfolk_ebird$date, format = "%d/%m/%Y")
+cambridge_ebird$date <- as.Date(cambridge_ebird$date, format = "%d/%m/%Y")
 
-names(norfolk_ebird)[names(norfolk_ebird) == "TIME OBSERVATIONS STARTED"] <- "time"
-norfolk_ebird$time <- as.POSIXct(norfolk_ebird$time, format = "%H:%M:%S")
-cromer_golf_course_data <- norfolk_ebird[grepl("Cromer Golf Course", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
-                                           norfolk_ebird$date == as.Date("2022-05-05") & 
-                                           format(norfolk_ebird$time, "%H:%M") < "17:00", ]
+names(cambridge_ebird)[names(cambridge_ebird) == "TIME OBSERVATIONS STARTED"] <- "time"
+cambridge_ebird$timeA <- as.POSIXct(cambridge_ebird$time, format = "%H:%M:%S")
+cambridge_ebird$timeB <- format(cambridge_ebird$timeA, "%H:%M:%S")
+
+grantchester_data <- cambridge_ebird[grepl("Grantchester Meadows", cambridge_ebird$LOCALITY, ignore.case = TRUE) & 
+                                           cambridge_ebird$date == as.Date("2022-05-20") & 
+                                       as.POSIXct(cambridge_ebird$timeB, format="%H:%M:%S") < as.POSIXct("17:00:00", format="%H:%M:%S"), ]
+grantchester_data
 
 # What is the least common bird species observed?
 # Aggregate data by common_name and calculate the total number of observations for each species
-obs_per_species <- aggregate(obs ~ common_name, data = stiffkey_fen_data, FUN = sum)
+obs_per_species <- aggregate(obs ~ common_name, data = grafham_data, FUN = sum)
 least_common_species <- obs_per_species[which.min(obs_per_species$obs), "common_name"]
 least_common_species
 
-# Where was the most northerly sighting of the Smew?
-smew_data <- norfolk_ebird[norfolk_ebird$common_name == "Smew", ]
+# Where was the most northerly sighting of the Barn Owl?
+smew_data <- cambridge_ebird[cambridge_ebird$common_name == "Barn Owl", ]
 most_northerly_smew <- smew_data[which.max(smew_data$LATITUDE), ]
 print(most_northerly_smew)
 
-# What is the average number of bird species observed per survey at Stiffkey Fen during May 2022?
-stiffkey_fen_may_2022_data <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
-                                              format(norfolk_ebird$date, "%Y-%m") == "2022-05", ]
+# What is the average number of bird species observed per survey at Grafham during May 2023?
+stiffkey_fen_may_2022_data <- cambridge_ebird[grepl("Grafham Water", cambridge_ebird$LOCALITY, ignore.case = TRUE) & 
+                                              format(cambridge_ebird$date, "%Y-%m") == "2023-05", ]
 unique_species_per_survey <- aggregate(common_name ~ survey, data = stiffkey_fen_may_2022_data, FUN = function(x) length(unique(x)))
 mean(unique_species_per_survey$common_name)
 
 # What was the median duration effort?
-median(norfolk_ebird$duration, na.rm = TRUE)
+median(cambridge_ebird$duration, na.rm = TRUE)
 
 # Which location has the highest number of individual observers?
 # Aggregate data by location and count the number of unique observers
-names(norfolk_ebird)[names(norfolk_ebird) == "OBSERVER ID"] <- "observer"
-observers_per_location <- aggregate(observer ~ LOCALITY, data = norfolk_ebird, FUN = function(x) length(unique(x)))
+names(cambridge_ebird)[names(cambridge_ebird) == "OBSERVER ID"] <- "observer"
+observers_per_location <- aggregate(observer ~ LOCALITY, data = cambridge_ebird, FUN = function(x) length(unique(x)))
 location_max_observers <- observers_per_location[which.max(observers_per_location$observer), "locality"]
 
 # Which bird is most often seen stationary?
-names(norfolk_ebird)[names(norfolk_ebird) == "PROTOCOL TYPE"] <- "protocol"
-stationary_data <- norfolk_ebird[norfolk_ebird$protocol == "Stationary", ]
+names(cambridge_ebird)[names(cambridge_ebird) == "PROTOCOL TYPE"] <- "protocol"
+stationary_data <- cambridge_ebird[cambridge_ebird$protocol == "Stationary", ]
 stationary_counts <- table(stationary_data$common_name)
 most_stationary_bird <- names(stationary_counts)[which.max(stationary_counts)]
-
+most_stationary_bird
 
 # 4. Easy inference questions -----
 
 # Where are Common Buzzards more abundant, at Stiffkey Fen or at Titchwell Marsh?
-stiffkey_fen_common_buzzard <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
-                                               grepl("Common Buzzard", norfolk_ebird$common_name, ignore.case = TRUE), ]
+stiffkey_fen_common_buzzard <- cambridge_ebird[grepl("Stiffkey Fen", cambridge_ebird$LOCALITY, ignore.case = TRUE) & 
+                                               grepl("Common Buzzard", cambridge_ebird$common_name, ignore.case = TRUE), ]
 
 total_obs_stiffkey_fen <- sum(stiffkey_fen_common_buzzard$obs, na.rm = TRUE)
 
-titchwell_marsh_common_buzzard <- norfolk_ebird[grepl("Titchwell Marsh", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
-                                                  grepl("Common Buzzard", norfolk_ebird$common_name, ignore.case = TRUE), ]
+titchwell_marsh_common_buzzard <- cambridge_ebird[grepl("Titchwell Marsh", cambridge_ebird$LOCALITY, ignore.case = TRUE) & 
+                                                  grepl("Common Buzzard", cambridge_ebird$common_name, ignore.case = TRUE), ]
 total_obs_titchwell_marsh <- sum(titchwell_marsh_common_buzzard$obs, na.rm = TRUE)
 
 # Compare the observation counts
@@ -197,14 +203,14 @@ if (total_obs_stiffkey_fen > total_obs_titchwell_marsh) {
 }
 
 # Which species are never spotted at Cromer Golf Course?
-all_species <- unique(norfolk_ebird$common_name)
-cromer_golf_course_data <- norfolk_ebird[norfolk_ebird$LOCALITY == "Cromer Golf Course", ]
+all_species <- unique(cambridge_ebird$common_name)
+cromer_golf_course_data <- cambridge_ebird[cambridge_ebird$LOCALITY == "Cromer Golf Course", ]
 species_at_cromer <- unique(cromer_golf_course_data$common_name)
 species_never_spotted <- setdiff(all_species, species_at_cromer)
 print(species_never_spotted)
 
 # Group data by survey
-survey_groups <- split(norfolk_ebird, norfolk_ebird$survey)
+survey_groups <- split(cambridge_ebird, cambridge_ebird$survey)
 
 # Initialize an empty list to store pairs of species observed together
 all_pairs <- list()
@@ -307,7 +313,7 @@ most_likely_pair <- names(pair_counts)[which.max(pair_counts)]
 print(most_likely_pair)
 
 # Which bird species can only be seen before 8 am at Sidestrand?
-sidestrand_data <- norfolk_ebird[norfolk_ebird$LOCALITY == "Sidestrand", ignore.case = TRUE]
+sidestrand_data <- cambridge_ebird[cambridge_ebird$LOCALITY == "Sidestrand", ignore.case = TRUE]
 
 # Extract the time information from the "TIME" column (assuming it's in HH:MM:SS format)
 sidestrand_data$time <- as.POSIXct(sidestrand_data$time, format = "%H:%M:%S")
@@ -333,19 +339,19 @@ third_most_abundant_species <- sorted_species$common_name[3]
 print(third_most_abundant_species)
 
 # Which bird species are only observed once at Snettisham RSPB Reserve?
-snettisham_data <- norfolk_ebird[norfolk_ebird$LOCALITY == "Snettisham RSPB Reserve", ignore.case = TRUE]
+snettisham_data <- cambridge_ebird[cambridge_ebird$LOCALITY == "Snettisham RSPB Reserve", ignore.case = TRUE]
 species_counts <- table(snettisham_data$common_name)
 only_observed_species <- names(species_counts)[species_counts == 1]
 print(only_observed_species)
 
 # Where are Barnacle Goose more likely to be observed, at Stiffkey Fen or at Titchwell Marsh?
-stiffkey_fen_common_buzzard <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
-                                               grepl("Barnacle Goose", norfolk_ebird$common_name, ignore.case = TRUE), ]
+stiffkey_fen_common_buzzard <- cambridge_ebird[grepl("Stiffkey Fen", cambridge_ebird$LOCALITY, ignore.case = TRUE) & 
+                                               grepl("Barnacle Goose", cambridge_ebird$common_name, ignore.case = TRUE), ]
 
 total_obs_stiffkey_fen <- sum(stiffkey_fen_common_buzzard$obs, na.rm = TRUE)
 
-titchwell_marsh_common_buzzard <- norfolk_ebird[grepl("Titchwell Marsh", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
-                                                  grepl("Barnacle Goose", norfolk_ebird$common_name, ignore.case = TRUE), ]
+titchwell_marsh_common_buzzard <- cambridge_ebird[grepl("Titchwell Marsh", cambridge_ebird$LOCALITY, ignore.case = TRUE) & 
+                                                  grepl("Barnacle Goose", cambridge_ebird$common_name, ignore.case = TRUE), ]
 total_obs_titchwell_marsh <- sum(titchwell_marsh_common_buzzard$obs, na.rm = TRUE)
 
 # Compare the observation counts
@@ -358,17 +364,17 @@ if (total_obs_stiffkey_fen > total_obs_titchwell_marsh) {
 }
 
 # Which bird species is most likely to be observed in a stationary position at Titchwell Marsh? 
-titchwell_data <- norfolk_ebird[grepl("Titchwell", norfolk_ebird$LOCALITY, ignore.case = TRUE), ]
+titchwell_data <- cambridge_ebird[grepl("Titchwell", cambridge_ebird$LOCALITY, ignore.case = TRUE), ]
 stationary_counts <- table(titchwell_data$common_name[titchwell_data$protocol == "Stationary"])
 most_stationary_species <- names(stationary_counts)[which.max(stationary_counts)]
 print(most_stationary_species)
 
 # Where are Black-bellied Plovers more abundant, at Stiffkey Fen or at Holme Dunes?
 # Filter the dataset for observations of Black-bellied Plovers at Stiffkey Fen
-stiffkey_data <- norfolk_ebird[grepl("Stiffkey Fen", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
-                                 grepl("Black-bellied Plover", norfolk_ebird$common_name, ignore.case = TRUE), ]
-holme_dunes_data <- norfolk_ebird[grepl("Holme Dunes", norfolk_ebird$LOCALITY, ignore.case = TRUE) & 
-                                    grepl("Black-bellied Plover", norfolk_ebird$common_name, ignore.case = TRUE), ]
+stiffkey_data <- cambridge_ebird[grepl("Stiffkey Fen", cambridge_ebird$LOCALITY, ignore.case = TRUE) & 
+                                 grepl("Black-bellied Plover", cambridge_ebird$common_name, ignore.case = TRUE), ]
+holme_dunes_data <- cambridge_ebird[grepl("Holme Dunes", cambridge_ebird$LOCALITY, ignore.case = TRUE) & 
+                                    grepl("Black-bellied Plover", cambridge_ebird$common_name, ignore.case = TRUE), ]
 stiffkey_count <- nrow(stiffkey_data)
 holme_dunes_count <- nrow(holme_dunes_data)
 
@@ -381,7 +387,7 @@ if (stiffkey_count > holme_dunes_count) {
 }
 
 # At which locality am I most likely to see a Ruddy Shelduck?
-ruddy_shelduck_data <- norfolk_ebird %>%
+ruddy_shelduck_data <- cambridge_ebird %>%
   filter(common_name == "Ruddy Shelduck")
 
 # Count the occurrences of Ruddy Shelducks in each locality
@@ -443,10 +449,10 @@ species_after_5pm <- unique(observations_after_5pm$common_name)
 print(species_after_5pm)
 
 # Are higher numbers of birds observed in the morning or in the afternoon?
-norfolk_ebird$hour <- hour(norfolk_ebird$time)
+cambridge_ebird$hour <- hour(cambridge_ebird$time)
 
 # Aggregate observations by hour
-observations_by_hour <- norfolk_ebird %>%
+observations_by_hour <- cambridge_ebird %>%
   filter(!is.na(hour)) %>% 
   group_by(hour) %>%
   summarise(total_obs = sum(obs, na.rm = TRUE))
@@ -467,7 +473,7 @@ if (morning_obs > afternoon_obs) {
 
 # Are more bird species observed in the morning or in the afternoon?
 # Filter out rows where hour is NA
-filtered_data <- norfolk_ebird %>%
+filtered_data <- cambridge_ebird %>%
   filter(!is.na(time))
 
 # Extract the hour from the time column
@@ -493,7 +499,7 @@ if (morning_species_count > afternoon_species_count) {
 
 # What is the second rarest bird species at Whitlingham Country Park?
 # Filter the dataset for observations only from Whitlingham Country Park
-whitlingham_data <- norfolk_ebird %>%
+whitlingham_data <- cambridge_ebird %>%
   filter(LOCALITY == "Whitlingham Country Park")
 
 # Count observations for each bird species
@@ -530,7 +536,7 @@ if (holme_dunes_count > whitlingham_count) {
 }
 
 # Which observer has the highest count of Marsh Harrier observations?
-marsh_harrier_data <- norfolk_ebird %>%
+marsh_harrier_data <- cambridge_ebird %>%
   filter(common_name == "Western Marsh Harrier")
 
 # Group the data by observer and count the number of observations for each observer
@@ -548,19 +554,19 @@ print(top_observer)
 
 # Are Gray Herons more likely to be seen alongside Black-headed Gulls or Eurasian Wrens?
 # Count the total number of observations for Gray Herons
-total_gray_heron_obs <- sum(norfolk_ebird$common_name == "Gray Heron", na.rm = TRUE)
+total_gray_heron_obs <- sum(cambridge_ebird$common_name == "Gray Heron", na.rm = TRUE)
 
 # Count the number of surveys containing Gray Herons
-gray_heron_surveys <- unique(norfolk_ebird$urvey[norfolk_ebird$common_name == "Gray Heron"])
+gray_heron_surveys <- unique(cambridge_ebird$urvey[cambridge_ebird$common_name == "Gray Heron"])
 
 # Group the data by survey and count the number of surveys where both Gray Herons and Black-headed Gulls are observed
-surveys_with_both_black_headed_gull <- norfolk_ebird %>%
+surveys_with_both_black_headed_gull <- cambridge_ebird %>%
   group_by(survey) %>%
   filter(any(common_name == "Gray Heron") & any(common_name == "Black-headed Gull")) %>%
   summarise(count = n())
 
 # Group the data by survey and count the number of surveys where both Gray Herons and Eurasian Wrens are observed
-surveys_with_both_eurasian_wren <- norfolk_ebird %>%
+surveys_with_both_eurasian_wren <- cambridge_ebird %>%
   group_by(survey) %>%
   filter(any(common_name == "Gray Heron") & any(common_name == "Eurasian Wren")) %>%
   summarise(count = n())
@@ -575,7 +581,7 @@ proportion_with_eurasian_wren
 
 # At which location are Gray Herons and Black-headed gulls most commonly seen together?
 # Filter the data for Gray Herons and Black-headed Gulls
-heron_gull_data <- norfolk_ebird %>%
+heron_gull_data <- cambridge_ebird %>%
   filter(common_name %in% c("Gray Heron", "Black-headed Gull"))
 
 # Group the filtered data by location and count the observations
@@ -632,7 +638,7 @@ print(least_likely_pair)
 
 # Which location has the least temporally consistent data?
 # Calculate standard deviation of observation dates for each location
-temporal_consistency <- norfolk_ebird %>%
+temporal_consistency <- cambridge_ebird %>%
   group_by(LOCALITY) %>%
   summarise(std_dev_date = sd(time, na.rm = TRUE))
 
@@ -685,11 +691,11 @@ most_frequent_earliest_species
 # Filter the dataset for observations of Common Ringed Plovers at Stiffkey Fen
 library(stringr)
 # Filter the dataset for observations of Common Ringed Plovers at localities containing "Stiffkey Fen"
-stiffkey_fen_common_ringed_plovers <- norfolk_ebird %>%
+stiffkey_fen_common_ringed_plovers <- cambridge_ebird %>%
   filter(str_detect(LOCALITY, "Stiffkey Fen") & common_name == "Common Ringed Plover")
 
 # Filter the dataset for observations of Common Ringed Plovers at localities containing "Holme Dunes"
-holme_dunes_common_ringed_plovers <- norfolk_ebird %>%
+holme_dunes_common_ringed_plovers <- cambridge_ebird %>%
   filter(str_detect(LOCALITY, "Holme Dunes") & common_name == "Common Ringed Plover")
 
 # Calculate the total number of observations for Common Ringed Plovers at each location
@@ -709,13 +715,13 @@ if (total_obs_stiffkey_fen > total_obs_holme_dunes) {
 
 # Which species are rarely observed but have been spotted in high numbers when seen?
 # Calculate the total number of observations for each species
-total_obs_per_species <- norfolk_ebird %>%
+total_obs_per_species <- cambridge_ebird %>%
   group_by(common_name) %>%
   summarise(total_obs = sum(obs, na.rm = TRUE)) %>%
   arrange(total_obs)
 
 # Calculate the total number of sightings for each species
-total_sightings_per_species <- norfolk_ebird %>%
+total_sightings_per_species <- cambridge_ebird %>%
   group_by(common_name) %>%
   summarise(total_sightings = n_distinct(survey)) %>%
   arrange(total_sightings)
@@ -738,13 +744,13 @@ print(rare_high_obs_species)
 
 # Which species are more commonly observed but have been spotted in low numbers when seen?
 # Calculate the total number of observations for each species
-total_obs_per_species <- norfolk_ebird %>%
+total_obs_per_species <- cambridge_ebird %>%
   group_by(common_name) %>%
   summarise(total_obs = sum(obs, na.rm = TRUE)) %>%
   arrange(desc(total_obs))
 
 # Calculate the total number of sightings for each species
-total_sightings_per_species <- norfolk_ebird %>%
+total_sightings_per_species <- cambridge_ebird %>%
   group_by(common_name) %>%
   summarise(total_sightings = n_distinct(survey)) %>%
   arrange(desc(total_sightings))
@@ -766,7 +772,7 @@ print(common_low_obs_species)
 
 # What is the average number of Garganeys spotted per observation?
 # Filter the data for the Garganey species
-garganey_data <- norfolk_ebird %>%
+garganey_data <- cambridge_ebird %>%
   filter(common_name == "Garganey")
 
 # Calculate the total number of observations for Garganey
@@ -812,18 +818,18 @@ most_common_species <- names(which.max(species_counts))
 print(most_common_species)
 
 # Examine hunting behaviours
-names(norfolk_ebird)[names(norfolk_ebird) == "SPECIES COMMENTS"] <- "species_comments"
-predatory_obs <- norfolk_ebird[grep("(hunt|hunting)", norfolk_ebird$species_comments, ignore.case = TRUE), ]
+names(cambridge_ebird)[names(cambridge_ebird) == "SPECIES COMMENTS"] <- "species_comments"
+predatory_obs <- cambridge_ebird[grep("(hunt|hunting)", cambridge_ebird$species_comments, ignore.case = TRUE), ]
 
 # Print the filtered observations
 print(predatory_obs)
 
-# Which bird species are exclusively seen in the northwest of Norfolk?
+# Which bird species are exclusively seen in the northwest of cambridgeshire?
 # Find the minimum and maximum latitude and longitude values in the dataset
-min_longitude <- min(norfolk_ebird$LONGITUDE, na.rm = TRUE)
-max_longitude <- max(norfolk_ebird$LONGITUDE, na.rm = TRUE)
-min_latitude <- min(norfolk_ebird$LATITUDE, na.rm = TRUE)
-max_latitude <- max(norfolk_ebird$LATITUDE, na.rm = TRUE)
+min_longitude <- min(cambridge_ebird$LONGITUDE, na.rm = TRUE)
+max_longitude <- max(cambridge_ebird$LONGITUDE, na.rm = TRUE)
+min_latitude <- min(cambridge_ebird$LATITUDE, na.rm = TRUE)
+max_latitude <- max(cambridge_ebird$LATITUDE, na.rm = TRUE)
 
 # Calculate the northwest bounds based on the maximum and minimum values
 northwest_bounds <- list(
@@ -833,19 +839,19 @@ northwest_bounds <- list(
   max_latitude = max_latitude
 )
 
-# Filter the norfolk_ebird dataset based on the calculated boundaries
-northwest_data <- norfolk_ebird[
-  norfolk_ebird$LONGITUDE >= northwest_bounds$min_longitude &
-    norfolk_ebird$LONGITUDE <= northwest_bounds$max_longitude &
-    norfolk_ebird$LATITUDE >= northwest_bounds$min_latitude &
-    norfolk_ebird$LATITUDE <= northwest_bounds$max_latitude,
+# Filter the cambridge_ebird dataset based on the calculated boundaries
+northwest_data <- cambridge_ebird[
+  cambridge_ebird$LONGITUDE >= northwest_bounds$min_longitude &
+    cambridge_ebird$LONGITUDE <= northwest_bounds$max_longitude &
+    cambridge_ebird$LATITUDE >= northwest_bounds$min_latitude &
+    cambridge_ebird$LATITUDE <= northwest_bounds$max_latitude,
 ]
 
 # Identify bird species observed in the northwest
 northwest_species <- unique(northwest_data$common_name)
 
 # Identify bird species observed in other regions
-other_species <- unique(norfolk_ebird$common_name[!norfolk_ebird$common_name %in% northwest_species])
+other_species <- unique(cambridge_ebird$common_name[!cambridge_ebird$common_name %in% northwest_species])
 
 # Identify bird species exclusive to the northwest
 exclusive_species <- setdiff(northwest_species, other_species)
@@ -854,22 +860,22 @@ exclusive_species <- setdiff(northwest_species, other_species)
 print(exclusive_species)
 
 # Filter dataset for observations in the northwest region
-northwest_data <- norfolk_ebird[
-  norfolk_ebird$LONGITUDE >= northwest_bounds$min_longitude &
-    norfolk_ebird$LONGITUDE <= northwest_bounds$max_longitude &
-    norfolk_ebird$LATITUDE >= northwest_bounds$min_latitude &
-    norfolk_ebird$LATITUDE <= northwest_bounds$max_latitude,
+northwest_data <- cambridge_ebird[
+  cambridge_ebird$LONGITUDE >= northwest_bounds$min_longitude &
+    cambridge_ebird$LONGITUDE <= northwest_bounds$max_longitude &
+    cambridge_ebird$LATITUDE >= northwest_bounds$min_latitude &
+    cambridge_ebird$LATITUDE <= northwest_bounds$max_latitude,
 ]
 
 # Identify bird species observed exclusively in the northwest
 northwest_species <- unique(northwest_data$common_name)
 
 # Filter dataset to exclude observations from the northwest region
-non_northwest_data <- norfolk_ebird[
-  !(norfolk_ebird$LONGITUDE >= northwest_bounds$min_longitude &
-      norfolk_ebird$LONGITUDE <= northwest_bounds$max_longitude &
-      norfolk_ebird$LATITUDE >= northwest_bounds$min_latitude &
-      norfolk_ebird$LATITUDE <= northwest_bounds$max_latitude),
+non_northwest_data <- cambridge_ebird[
+  !(cambridge_ebird$LONGITUDE >= northwest_bounds$min_longitude &
+      cambridge_ebird$LONGITUDE <= northwest_bounds$max_longitude &
+      cambridge_ebird$LATITUDE >= northwest_bounds$min_latitude &
+      cambridge_ebird$LATITUDE <= northwest_bounds$max_latitude),
 ]
 
 # Identify bird species observed outside the northwest region
@@ -884,7 +890,7 @@ print(exclusive_northwest_species)
 # Which is the southernmost species of plover?
 
 # Filter for plover species
-plover_data <- norfolk_ebird %>%
+plover_data <- cambridge_ebird %>%
   filter(grepl("Plover", common_name, ignore.case = TRUE))
 
 # Identify the southernmost species
@@ -897,7 +903,7 @@ southernmost_plover$common_name
 # Which species are always solitary?
 
 # Group the data by common name and count the unique observation counts
-species_counts <- norfolk_ebird %>%
+species_counts <- cambridge_ebird %>%
   group_by(common_name) %>%
   summarise(unique_obs_counts = n_distinct(obs))
 
@@ -909,7 +915,7 @@ solitary_species <- species_counts %>%
 solitary_species$common_name
 
 # At which location are the largest groups of the same bird species observed?
-grouped_data <- norfolk_ebird %>%
+grouped_data <- cambridge_ebird %>%
   group_by(common_name, LOCALITY) %>%
   # group_by(LOCALITY) %>%
   summarise(group_size = obs)
@@ -923,7 +929,7 @@ largest_group <- grouped_data %>%
 largest_location <- largest_group$LOCALITY
 
 # Which is the location with the highest diversity of birds?
-location_diversity <- norfolk_ebird %>%
+location_diversity <- cambridge_ebird %>%
   group_by(LOCALITY) %>%
   summarise(unique_species_count = n_distinct(common_name))
 
@@ -952,10 +958,10 @@ least_diverse_species_count <- least_diverse_location$unique_species_count
 cat("The location with the lowest diversity of birds is", least_diverse_location_name, "with", least_diverse_species_count, "unique species observed.\n")
 
 # Which birds have been seen on cloudy days?
-names(norfolk_ebird)[names(norfolk_ebird) == "TRIP COMMENTS"] <- "trip_comments"
+names(cambridge_ebird)[names(cambridge_ebird) == "TRIP COMMENTS"] <- "trip_comments"
 
 # Filter the data for rows where trip comments contain "cloud" or "cloudy"
-cloudy_data <- norfolk_ebird %>%
+cloudy_data <- cambridge_ebird %>%
   filter(str_detect(trip_comments, "rain") | str_detect(trip_comments, "rainy"))
 
 # Extract unique bird species observed on cloudy days
@@ -967,7 +973,7 @@ cat(cloudy_birds, sep = ", ")
 
 # Which bird species are exclusively seen in fens?c
 # Filter the dataset to include only records from fens
-fen_data <- norfolk_ebird %>%
+fen_data <- cambridge_ebird %>%
   filter(str_detect(LOCALITY, "fen")) 
 
 # Count occurrences of each species
@@ -980,10 +986,10 @@ names(sort(species_counts, decreasing = TRUE))
 print(most_common_species)
 
 # What species are most commonly reported by group surveys?
-names(norfolk_ebird)[names(norfolk_ebird) == "GROUP IDENTIFIER"] <- "group"
+names(cambridge_ebird)[names(cambridge_ebird) == "GROUP IDENTIFIER"] <- "group"
 
 # Filter the dataset for group surveys
-group_survey_data <- norfolk_ebird[!is.na(norfolk_ebird$group), ]
+group_survey_data <- cambridge_ebird[!is.na(cambridge_ebird$group), ]
 
 # Count the occurrences of each species in group surveys
 species_counts <- table(group_survey_data$common_name)
@@ -999,7 +1005,7 @@ print(top_species)
 
 # Which bird species are most likely to have species notes?
 # Filter the dataset for species with non-empty species notes
-species_with_notes <- norfolk_ebird[!is.na(norfolk_ebird$species_comments), ]
+species_with_notes <- cambridge_ebird[!is.na(cambridge_ebird$species_comments), ]
 
 # Count the occurrences of each species with notes
 species_counts <- table(species_with_notes$common_name)
@@ -1014,10 +1020,10 @@ top_species <- names(species_counts_sorted[species_counts_sorted == max(species_
 print(top_species)
 
 # Calculate the total number of species observed per checklist for each observer
-observer_species_counts <- aggregate(obs ~ observer, data = norfolk_ebird, FUN = function(x) length(unique(x)))
+observer_species_counts <- aggregate(obs ~ observer, data = cambridge_ebird, FUN = function(x) length(unique(x)))
 
 # Calculate the average number of species observed per checklist for each observer
-observer_avg_species <- aggregate(obs ~ observer, data = norfolk_ebird, FUN = function(x) mean(length(unique(x))))
+observer_avg_species <- aggregate(obs ~ observer, data = cambridge_ebird, FUN = function(x) mean(length(unique(x))))
 
 # Find the observer with the highest average number of species per checklist
 max_avg_species_observer <- observer_avg_species[which.max(observer_avg_species$obs), ]
@@ -1027,7 +1033,7 @@ print(max_avg_species_observer)
 
 # What time of day am I most likely to spot a Smew?
 # Filter the data for observations of Smew
-smew_obs <- norfolk_ebird[norfolk_ebird$common_name == "Smew", ]
+smew_obs <- cambridge_ebird[cambridge_ebird$common_name == "Smew", ]
 
 # Extract the hour component from the observation times
 #smew_obs$hour <- as.integer(format(smew_obs$observation_time, "%H"))
@@ -1043,7 +1049,7 @@ print(most_common_hour)
 
 # are weekends or weekdays better for spotting birds?
 # Convert observation dates to weekdays (Monday = 1, ..., Sunday = 7)
-norfolk_ebird$weekday <- weekdays(norfolk_ebird$date)
+cambridge_ebird$weekday <- weekdays(cambridge_ebird$date)
 
 # Define a function to categorize days as either weekday or weekend
 categorize_day <- function(day) {
@@ -1055,21 +1061,21 @@ categorize_day <- function(day) {
 }
 
 # Apply the categorize_day function to create a new column indicating weekday or weekend
-norfolk_ebird$day_type <- sapply(norfolk_ebird$day_of_week, categorize_day)
+cambridge_ebird$day_type <- sapply(cambridge_ebird$day_of_week, categorize_day)
 
 # Count the frequency of observations on weekdays and weekends
-observation_counts <- table(norfolk_ebird$day_type)
+observation_counts <- table(cambridge_ebird$day_type)
 
 # Print the observation counts
 print(observation_counts)
 
 # Calculate the total number of unique species observed on weekdays and weekends
-weekday_species <- length(unique(norfolk_ebird$common_name[norfolk_ebird$day_type == "Weekday"]))
-weekend_species <- length(unique(norfolk_ebird$common_name[norfolk_ebird$day_type == "Weekend"]))
+weekday_species <- length(unique(cambridge_ebird$common_name[cambridge_ebird$day_type == "Weekday"]))
+weekend_species <- length(unique(cambridge_ebird$common_name[cambridge_ebird$day_type == "Weekend"]))
 
 # Calculate the average number of unique species observed
-average_weekday_species <- weekday_species / sum(norfolk_ebird$day_type == "Weekday")
-average_weekend_species <- weekend_species / sum(norfolk_ebird$day_type == "Weekend")
+average_weekday_species <- weekday_species / sum(cambridge_ebird$day_type == "Weekday")
+average_weekend_species <- weekend_species / sum(cambridge_ebird$day_type == "Weekend")
 
 # Print the results
 print(paste("Average number of unique species observed on weekdays:", average_weekday_species))
@@ -1077,7 +1083,7 @@ print(paste("Average number of unique species observed on weekends:", average_we
 
 # Which birds might be overrepresented?
 # Calculate the overall proportion of each bird species in the dataset
-species_proportion <- prop.table(table(norfolk_ebird$common_name))
+species_proportion <- prop.table(table(cambridge_ebird$common_name))
 
 # Determine the expected proportion of each species based on their overall frequency
 expected_proportion <- mean(species_proportion)
