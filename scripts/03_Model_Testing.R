@@ -1,6 +1,6 @@
 # Initial comparison of three different models with iterative improvements
 # Elise Gallois, elise.gallois94@gmail.com
-# 29th April 2025
+# 29th April 2024
 # learning to code is fun
 
 # 1. Load libraries -----
