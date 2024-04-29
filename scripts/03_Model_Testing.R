@@ -1,6 +1,6 @@
 # Initial comparison of three different models with iterative improvements
 # Elise Gallois, elise.gallois94@gmail.com
-# 29th April 2023 - eBird Model testing
+# 29th April 2025
 
 # 1. Load libraries -----
 library(tidyverse)
