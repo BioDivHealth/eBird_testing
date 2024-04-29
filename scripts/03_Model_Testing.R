@@ -4,7 +4,7 @@
 
 # 1. Load libraries -----
 library(tidyverse)
-library(esquisse)
+library(esquisse) 
 library(viridis)
 
 # 2. Load data  ----
