@@ -4,6 +4,8 @@
 
 # 1. Load libraries -----
 library(tidyverse)
+library(terra)
+library(raster)
 
 # 2. Load data and save as RData for future use ----
 
@@ -12,7 +14,7 @@ library(tidyverse)
 load("data/norfolk_birds.RData")
 View(norfolk_ebird) # "SCIENTIFIC NAME" has latin name
 
-# load habitat data
+# load habitat data (SPECITS)
 habitat <- read_csv("data/habitat_both.csv")
 View(habitat) # "Species" column has latin name
 
@@ -44,4 +46,12 @@ aggregated_habitat <- birds_habitat %>%
 # left join on ebird and habitat data
 norfolk_habitat <- left_join(norfolk_ebird, aggregated_habitat, by = "Species")
 
+
+# Specify the path to the IUCN tif file
+tif_file <- "/Volumes/T7 Shield/iucn_habitatclassification_composite_lvl2_ver004.tif"
+
+# Open the tif file
+habitat_data <- rast(tif_file)
+
+plot(habitat_data)
 
