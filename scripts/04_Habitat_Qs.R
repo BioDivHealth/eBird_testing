@@ -55,3 +55,17 @@ habitat_data <- rast(tif_file)
 
 plot(habitat_data)
 
+# clip to UK extent
+uk_extent <- extent(-10, 2, 49, 61)  # xmin, xmax, ymin, ymax
+uk_clipped <- crop(habitat_data, uk_extent)
+plot(uk_clipped)
+
+# save smaller file for easy loading
+output_file <- "data/UK_clipped_raster.tif"
+writeRaster(uk_clipped, filename = output_file, filetype = "GTiff", overwrite = TRUE)
+
+
+
+
+
+
