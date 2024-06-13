@@ -27,6 +27,13 @@ ggplot(model_testing) +
   facet_wrap(vars(model))
 
 # 2 - By Query Type
+# Define the new order and names for the levels
+model_testing$model <- recode(model_testing$model, matrix_only = '1: No prompt', 
+                        metadata_added = '2:Prompt: Basic metadata',
+                        metadata_prompt = '3: Prompt: Thorough Metadata',
+                        metadata_prompt_certain = '4: Prompt: Thorough Metadata with Examples',
+                        CAMB_metadata_prompt_certain = '5: Prompt: Different county' )
+
 ggplot(model_testing) +
   aes(x = quality_scoring, fill = query_type) +
   geom_bar() +
