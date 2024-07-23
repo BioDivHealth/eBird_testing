@@ -33,7 +33,8 @@ model_testing$model <- recode(model_testing$model, matrix_only = '1: No prompt',
                         metadata_added = '2:Prompt: Basic metadata',
                         metadata_prompt = '3: Prompt: Thorough Metadata',
                         metadata_prompt_certain = '4: Prompt: Thorough Metadata with Examples',
-                        CAMB_metadata_prompt_certain = '5: Prompt: Different county' )
+                        CAMB_metadata_prompt_certain = '5: Prompt: Different county',
+                        `4o_wolfram_prompt` = '6: Prompt: 4o mini & Wolfram')
 
 
 ggplot(model_testing) +
@@ -45,8 +46,6 @@ ggplot(model_testing) +
   scale_fill_viridis_d(option = "plasma", direction = 1) +
   theme_classic() +
   facet_wrap(vars(model), scales='free')
-
-
 
 # 3 - Time-specific
 model_testing %>%
