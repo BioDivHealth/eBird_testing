@@ -568,3 +568,98 @@
 93,Correct,4o_wolfram_prompt,Behaviours,S ,G,S
 94,Correct,4o_wolfram_prompt,Abundance,G,G,G
 95,Wrong,4o_wolfram_prompt,Metadata,S ,G,G
+1,Correct,4o_prompt,Abundance,G,G,G
+2,Correct,4o_prompt,Metadata,S ,G,G
+3,Wrong,4o_prompt,Metadata,G,G,S
+4,Correct,4o_prompt,Community,G,G,S
+5,Correct,4o_prompt,Abundance,G,S,G
+6,Correct,4o_prompt,Abundance,G,S,G
+7,Wrong,4o_prompt,Abundance,G,G,S
+8,Wrong,4o_prompt,Abundance,G,S,S
+9,Correct,4o_prompt,Abundance,G,G,S
+10,Correct,4o_prompt,Abundance,G,G,G
+11,Correct,4o_prompt,Community,G,G,S
+12,Wrong,4o_prompt,Community,G,G,S
+13,Correct,4o_prompt,Community,G,G,S
+14,Correct,4o_prompt,Community,G,G,S
+15,Correct,4o_prompt,Abundance,G,S,G
+16,Correct,4o_prompt,Abundance,G,S,G
+17,Correct,4o_prompt,Community,G,S,G
+18,Correct,4o_prompt,Abundance,G,S,G
+19,Correct,4o_prompt,Abundance,G,G,S
+20,Correct,4o_prompt,Abundance,G,S,S
+21,Correct,4o_prompt,Metadata,S ,G,G
+22,Wrong,4o_prompt,Metadata,S ,G,G
+23,Correct,4o_prompt,Metadata,S ,G,G
+24,Correct,4o_prompt,Community,G,G,S
+25,Wrong,4o_prompt,Abundance,S ,G,S
+26,Correct,4o_prompt,Metadata,G,G,S
+27,Correct,4o_prompt,Community,G,S,S
+28,Correct,4o_prompt,Abundance,S ,G,S
+29,Correct,4o_prompt,Community,G,G,G
+30,Correct,4o_prompt,Community,G,S,G
+31,Correct,4o_prompt,Community,G,G,S
+32,Unsure,4o_prompt,Metadata,S ,G,G
+33,Correct,4o_prompt,Metadata,G,G,G
+34,Unsure,4o_prompt,Behaviours,G,G,S
+35,Correct,4o_prompt,Community,G,S,G
+36,Correct,4o_prompt,Abundance,G,S,S
+37,Correct,4o_prompt,Community,G,G,S
+38,Correct,4o_prompt,Community,G,S,G
+39,Correct,4o_prompt,Community,G,S,S
+40,Wrong,4o_prompt,Community,G,G,S
+41,Correct,4o_prompt,Community,S ,S,G
+42,Correct,4o_prompt,Community,S ,G,S
+43,Wrong,4o_prompt,Abundance,G,G,S
+44,Correct,4o_prompt,Community,G,G,S
+45,Correct,4o_prompt,Community,G,G,S
+46,Correct,4o_prompt,Behaviours,G,G,S
+47,Correct,4o_prompt,Community,G,S,G
+48,Wrong,4o_prompt,Abundance,G,S,S
+49,Correct,4o_prompt,Community,G,S,S
+50,Correct,4o_prompt,Community,G,G,S
+51,Wrong,4o_prompt,Community,G,G,S
+52,Wrong,4o_prompt,Community,S ,G,S
+53,Correct,4o_prompt,Metadata,S ,G,S
+54,Correct,4o_prompt,Metadata,S ,G,S
+55,Correct,4o_prompt,Community,G,G,S
+56,Correct,4o_prompt,Community,G,S,S
+57,Correct,4o_prompt,Abundance,G,G,S
+58,Wrong,4o_prompt,Abundance,G,S,G
+59,Correct,4o_prompt,Community,G,S,S
+60,Wrong,4o_prompt,Community,G,G,S
+61,Wrong,4o_prompt,Community,G,G,S
+62,Wrong,4o_prompt,Community,G,G,S
+63,Correct,4o_prompt,Metadata,S ,G,G
+64,Wrong,4o_prompt,Abundance,G,G,S
+65,Wrong,4o_prompt,Community,S ,G,S
+66,Wrong,4o_prompt,Community,G,S,S
+67,Correct,4o_prompt,Abundance,G,S,G
+68,Correct,4o_prompt,Community,G,G,S
+69,Wrong,4o_prompt,Abundance,G,G,G
+70,Wrong,4o_prompt,Abundance,G,G,G
+71,Unsure,4o_prompt,Metadata,G,G,G
+72,Correct,4o_prompt,Behaviours,G,G,S
+73,Correct,4o_prompt,Behaviours,G,G,G
+74,Wrong,4o_prompt,Behaviours,G,G,G
+75,Wrong,4o_prompt,Behaviours,G,G,G
+76,Wrong,4o_prompt,Community,G,G,G
+77,Wrong,4o_prompt,Metadata,G,G,G
+78,Correct,4o_prompt,Metadata,G,G,S
+79,Wrong,4o_prompt,Behaviours,G,G,G
+80,Correct,4o_prompt,Abundance,G,G,G
+81,Correct,4o_prompt,Community,G,G,S
+82,Correct,4o_prompt,Community,G,G,S
+83,Unsure,4o_prompt,Behaviours,S ,G,S
+84,Correct,4o_prompt,Behaviours,G,G,S
+85,Correct,4o_prompt,Behaviours,G,G,S
+86,Unsure,4o_prompt,Community,G,G,G
+87,Correct,4o_prompt,Metadata,G,G,G
+88,Wrong,4o_prompt,Metadata,G,G,G
+89,Correct,4o_prompt,Metadata,G,G,G
+90,Wrong,4o_prompt,Metadata,G,G,G
+91,Correct,4o_prompt,Behaviours,G,G,S
+92,Correct,4o_prompt,Community,S ,S,G
+93,Unsure,4o_prompt,Behaviours,S ,G,S
+94,Correct,4o_prompt,Abundance,G,G,G
+95,Wrong,4o_prompt,Metadata,S ,G,G

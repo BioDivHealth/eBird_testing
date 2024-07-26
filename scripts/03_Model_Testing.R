@@ -34,7 +34,8 @@ model_testing$model <- recode(model_testing$model, matrix_only = '1: No prompt',
                         metadata_prompt = '3: Prompt: Thorough Metadata',
                         metadata_prompt_certain = '4: Prompt: Thorough Metadata with Examples',
                         CAMB_metadata_prompt_certain = '5: Prompt: Different county',
-                        `4o_wolfram_prompt` = '6: Prompt: 4o mini & Wolfram')
+                        `4o_prompt` = '6: Prompt: 4o mini',
+                        `4o_wolfram_prompt` = '7: Prompt: 4o mini & Wolfram')
 
 
 ggplot(model_testing) +
@@ -45,7 +46,7 @@ ggplot(model_testing) +
        legend_title = "Query Type") +
   scale_fill_viridis_d(option = "plasma", direction = 1) +
   theme_classic() +
-  facet_wrap(vars(model), scales='free')
+  facet_wrap(vars(model))
 
 # 3 - Time-specific
 model_testing %>%
@@ -110,7 +111,11 @@ model_testing$model <- factor(model_testing$model, levels = c('1: No prompt',
                                                               '3: Prompt: Thorough Metadata',
                                                               '4: Prompt: Thorough Metadata with Examples',
                                                               '5: Prompt: Different county',
-                                                              '6: Prompt: 4o mini & Wolfram'))
+                                                              '6: Prompt: 4o mini',
+                                                              '7: Prompt: 4o mini & Wolfram' ))
+
+
+
 
 # Calculate proportions for each quality scoring category per model
 proportions_time_series <- model_testing %>%
