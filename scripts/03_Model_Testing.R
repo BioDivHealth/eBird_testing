@@ -131,7 +131,7 @@ proportions_time_series <- model_testing %>%
   labs(y = "Proportion", x = "Model Version", title = "Quality Scoring Proportions Over Model Versions") +
   theme_classic() +
  # facet_wrap(vars(as.factor(query_type)), scales = "free_x") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))) 
 
 # 5 - Transition matrix ----
 # convert quality_scoring to a numeric scale
