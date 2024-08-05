@@ -38,7 +38,7 @@ for (species in species_list) {
   }
 }
 
-# Step 3: Store Results into a new CSV file
+# Step 3: Store Results into a new CSV file 
 write.csv(results, "data/GBIF_results.csv", row.names = FALSE)
 
 print("GBIF coordinates data has been successfully retrieved and saved.")
