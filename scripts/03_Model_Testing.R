@@ -91,7 +91,7 @@ model_testing %>%
   group_by(model, Q_ID) %>%
   count(quality_scoring) %>%
   mutate(proportion = n / sum(n)) %>%
-  ggplot() +
+  ggplot() + 
   aes(x = Q_ID, y = proportion, fill = quality_scoring) +
   geom_col() +
   scale_fill_manual(
