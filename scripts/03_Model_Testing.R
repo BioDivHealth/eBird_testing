@@ -86,6 +86,45 @@ model_testing %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1)))
 
 
+# make the above but order the question ID by the proportion of correct answers
+model_testing %>%
+  group_by(Q_ID) %>%
+  summarize(correct_proportion = mean(quality_scoring == "Correct")) %>%
+  arrange(desc(correct_proportion)) %>%
+  pull(Q_ID) -> ordered_Q_ID
+
+
+
+# plot again with reordered qs
+(consistency_heatmap_ordered_flipped_clean <- ggplot(model_testing) +
+  aes(x = model, y = factor(Q_ID, levels = ordered_Q_ID), fill = quality_scoring) +
+  geom_tile() +
+  scale_fill_manual(
+    values = c(Correct = "#36DF48",
+               Unsure = "#CDBA22",
+               Wrong = "#D94714")
+   ) +
+  labs(y = "Questions", x = "Model") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+
+
+#  percentages of % correct, % unsure, % wrong for each model
+model_testing %>%
+  group_by(model) %>%
+  summarize(correct = mean(quality_scoring == "Correct"),
+            unsure = mean(quality_scoring == "Unsure"),
+            wrong = mean(quality_scoring == "Wrong"))
+
+# summary statistics for the query types for model 7
+model_testing %>%
+  filter(model == "7: Prompt: 4o mini & Wolfram") %>%
+  group_by(query_type) %>%
+  summarize(correct = mean(quality_scoring == "Correct"),
+            unsure = mean(quality_scoring == "Unsure"),
+            wrong = mean(quality_scoring == "Wrong"))
+
+
 # Facet grid of proportions by model and Q_ID
 (proportions_grid <- model_testing %>%
   group_by(model, Q_ID) %>%
@@ -172,7 +211,7 @@ model_testing <- model_testing %>%
 (change_plot <- ggplot(model_testing, aes(x = model, y = score_change, group = Q_ID, color = as.factor(Q_ID))) +
     geom_line(size = 1) +
     geom_point(size = 2) +
-    scale_y_continuous(limits = c(-2, 2), breaks = -2:2, labels = c("Decrease", "No Change", "Increase")) +
+   # scale_y_continuous(limits = c(-2, 2), breaks = -2:2, labels = c("Decrease", "No Change", "Increase")) +
     labs(y = "Change in Quality Score", x = "Model Version", title = "Volatility in Quality Scores by Q_ID") +
     theme_classic() +
     theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)))
