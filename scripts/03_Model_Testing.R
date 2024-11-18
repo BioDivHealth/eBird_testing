@@ -125,6 +125,7 @@ model_testing %>%
             wrong = mean(quality_scoring == "Wrong"))
 
 
+
 # Facet grid of proportions by model and Q_ID
 (proportions_grid <- model_testing %>%
   group_by(model, Q_ID) %>%
