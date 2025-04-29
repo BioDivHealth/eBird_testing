@@ -1,6 +1,4 @@
-# Testing questions - getting correct answers for question answering
-# Elise Gallois, elise.gallois94@gmail.com
-# 11th March 2024
+
 
 # 1. Load libraries -----
 library(tidyverse)
