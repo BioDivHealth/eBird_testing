@@ -1,6 +1,3 @@
-# Testing questions - getting correct answers for habitat question answering
-# Elise Gallois, elise.gallois94@gmail.com
-# 28th May 2024
 
 # 1. Load libraries -----
 library(tidyverse) 
